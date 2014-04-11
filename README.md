@@ -15,7 +15,7 @@ Steps to integrate:
 
 - get and compile source-code
 		
-		git clone; mvn package
+		git clone; mvn install
 		
 - insert into to your pom.xml (or alike)
 
