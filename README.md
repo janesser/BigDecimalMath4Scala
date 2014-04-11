@@ -15,7 +15,9 @@ Steps to integrate:
 
 - get and compile source-code
 		
-		git clone https://bitbucket.org/janesser/bigdecimalmath.git; mvn install
+		git clone https://bitbucket.org/janesser/bigdecimalmath.git
+		cd BigDecimalMath
+		mvn install
 		
 - insert into to your pom.xml (or alike)
 
