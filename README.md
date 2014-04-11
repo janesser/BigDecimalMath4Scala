@@ -16,6 +16,7 @@ Steps to integrate:
 - get and compile source-code
 		
 		git clone; mvn package
+		
 - insert into to your pom.xml (or alike)
 
 		<dependency>
@@ -23,6 +24,7 @@ Steps to integrate:
 			<artifactId>BigDecimalMath</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
+
 - insert into your code
 
 		import de.esserjan.edu.BigDecimalMath._
