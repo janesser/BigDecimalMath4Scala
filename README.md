@@ -52,9 +52,7 @@ Feel free to offer pull requests or create issues for your suggestions.
 # Contact
 [januszesser@twitter](https://twitter.com/januszesser)
 
-<a href="https://flattr.com/submit/auto?user_id=januszesser&url=http%3A%2F%2Fbitbucket.org%2Fjanesser%2Fbigdecimalmath" target="_blank">
-	<img src="//api.flattr.com/button/flattr-badge-large.png" alt="Flattr this" title="Flattr this" border="0" />
-</a>
+[![Flattr this](//api.flattr.com/button/flattr-badge-large.png "Flattr this")](https://flattr.com/submit/auto?user_id=januszesser&url=http%3A%2F%2Fbitbucket.org%2Fjanesser%2Fbigdecimalmath)
 
 # See also
 Based on [A Java Math.BigDecimal Implementation of Core Mathematical Functions](http://arxiv.org/abs/0908.3030).
