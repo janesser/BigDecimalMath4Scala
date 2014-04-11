@@ -2,13 +2,11 @@ package de.esserjan.edu
 
 object BigDecimalMath {
 
-  val MINUS_ONE: BigDecimal = -1
-  val ZERO: BigDecimal = 0
-  val ONE: BigDecimal = 1
-
   /**
    * Euler's constant Pi.
-   * http://www.cs.arizona.edu/icon/oddsends/pi.htm
+   * [[The University of Arizona - Computer Science - PI|http://www.cs.arizona.edu/icon/oddsends/pi.htm]]
+   *
+   * Precision is actually PI_PRECISION = 1638.
    */
   private[this] val PI: BigDecimal = new java.math.BigDecimal("""3.14159265358979323846264338327950288419716939937510582097494459230781640628620
 899862803482534211706798214808651328230664709384460955058223172535940812848111
@@ -33,11 +31,19 @@ object BigDecimalMath {
 654252786255181841757467289097777279380008164706001614524919217321721477235014""".replaceAllLiterally("\n", ""))
   val PI_PRECISION = PI.precision
 
+  /**
+   * @param mc MathContext indicating the requested precision (and rounding-mode)
+   * @return PI rounded to the requested precision
+   */
   def pi(mc: java.math.MathContext): BigDecimal = {
     if (mc.getPrecision() < PI_PRECISION) PI.round(mc)
     else if (mc.getPrecision() > PI_PRECISION) throw new NotImplementedError
     else PI
   }
+  /**
+   * @param precision plain-precision as integer
+   * @return (see above)
+   */
   def pi(precision: Int): BigDecimal = pi(new java.math.MathContext(precision))
 
   def sqrt(x: BigDecimal): BigDecimal =
@@ -52,7 +58,7 @@ object BigDecimalMath {
 
     def toBigDecimal = BigDecimal(x)
 
-    def faculty: BigInt = {
+    def factorial: BigInt = {
       @scala.annotation.tailrec
       def fac(n: BigInt, acc: BigInt = ONE): BigInt = {
         if (n == ZERO || n == ONE) acc
@@ -64,50 +70,89 @@ object BigDecimalMath {
   }
 
   implicit class BigDecimalOps(x: BigDecimal) {
+    private[this] val MINUS_ONE: BigDecimal = new java.math.BigDecimal(-1.0, new java.math.MathContext(x.precision))
 
     def negate = x * MINUS_ONE
 
-    def faculty: BigDecimal =
+    def factorial: BigDecimal =
       if (!x.isWhole) throw new IllegalArgumentException
-      else x.toBigInt.faculty.toBigDecimal
+      else x.toBigInt.factorial.toBigDecimal
 
     def sin = sinus(x)
     def cos = cosinus(x)
     def tan = sin / cos
   }
 
-  def sumSerie(x: BigDecimal,
+  /**
+   * Evaluate a series given by {{fx}} at the point {{x}}.
+   *
+   * @param x evaluate at that point (precision-driver)
+   * @param fx function for the k's series-component
+   * @param n limit for series-components
+   * @param k current series-component's index (starts with 0)
+   * @param acc accumulator
+   * @return {{acc}} once {{k == n}}
+   */
+  @scala.annotation.tailrec
+  def evalSeries(x: BigDecimal,
     fx: (Int) => (BigDecimal => BigDecimal),
     n: Int, k: Int = 0, acc: BigDecimal = 0): BigDecimal = {
-    if (k < n) sumSerie(x, fx, n, k + 1, acc + fx(k)(x))
+    if (k < n) evalSeries(x, fx, n, k + 1, acc + fx(k)(x))
     else acc.round(new java.math.MathContext(x.precision))
   }
 
+  /**
+   * @param x in radial measure (a period lasts from 0 to 2 \pi) (precision-driver)
+   * @return sinus at point {{x}}
+   */
   def sinus(x: BigDecimal): BigDecimal = {
-    val Pi = pi(new java.math.MathContext(x.precision))
-    val TwoPi = Pi * 2
-    val HalfPi = Pi / 2
+    val mc = new java.math.MathContext(x.precision)
 
-    if (x == ZERO || x == Pi) ZERO
-    else if (x == HalfPi) ONE
-    else if (x == HalfPi * 3) MINUS_ONE
-    else if (x < ZERO) sinus(x.negate).negate
-    else if (x > TwoPi) sinus(x % TwoPi)
+    val Pi = pi(mc)
+    val twoPi = Pi * 2
+    val halfPi = Pi / 2
+
+    val minusOne: BigDecimal = BigDecimal(-1.0, mc).setScale(x.precision)
+    val zero: BigDecimal = BigDecimal(0.0, mc)
+    val one: BigDecimal = BigDecimal(1.0, mc).setScale(x.precision)
+
+    if (x == Pi) zero
+    else if (x == halfPi) one
+    else if (x == halfPi * 3) minusOne
+    else if (x.signum < 0) sinus(x.negate).negate
+    else if (x > twoPi) sinus(x - twoPi)
     else if (x > Pi) sinus(x - Pi).negate
-    else if (x > HalfPi) sinus(x - HalfPi)
     else {
       /*
        * x^(2k+1) < x.ulp; (2k+1)*log10(x) < -x.precision; 2k*log10(x)< -x.precision;
        */
       val n: Int = (x.precision / java.lang.Math.log10(x.doubleValue)).toInt / 2
-      sumSerie(x,
+      evalSeries(x,
         (k: Int) =>
           (x: BigDecimal) =>
-            BigDecimal(-1).pow(k) * x.pow(2 * k + 1) / BigDecimal(2 * k + 1).faculty,
+            BigDecimal(-1).pow(k) * x.pow(2 * k + 1) / BigInt(2 * k + 1).factorial.toBigDecimal,
         n)
     }
   }
 
-  def cosinus(x: BigDecimal): BigDecimal =
-    sinus(pi(x.precision) / 4 + x)
+  def cosinus(x: BigDecimal): BigDecimal = {
+    val mc = new java.math.MathContext(x.precision)
+
+    val Pi = pi(mc)
+    val twoPi = Pi * 2
+    val halfPi = Pi / 2
+
+    val minusOne: BigDecimal = BigDecimal(-1.0, mc).setScale(x.precision)
+    val zero: BigDecimal = BigDecimal(0.0, mc)
+    val one: BigDecimal = BigDecimal(1.0, mc).setScale(x.precision)
+
+    if (x == twoPi) one
+    else if (x == Pi) minusOne
+    else if (x == halfPi) zero
+    else if (x.signum < 0) cosinus(x.negate)
+    else if (x > twoPi) cosinus(x - twoPi)
+    else if (x > Pi) cosinus(x - Pi)
+    else if (x > halfPi) cosinus(x - halfPi).negate
+    else sinus(x + (pi(x.precision) / 2))
+  }
 }

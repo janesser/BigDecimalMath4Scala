@@ -57,7 +57,7 @@ class BigDecimalMathSpec extends FlatSpec with Matchers with PropertyChecks {
   it should "enable BigIntOps - faculty" in {
     forAll(faculties) {
       (n: Int, fac: Int) =>
-        BigInt(n).faculty.intValue should be(fac)
+        BigInt(n).factorial.intValue should be(fac)
     }
   }
 
@@ -75,13 +75,13 @@ class BigDecimalMathSpec extends FlatSpec with Matchers with PropertyChecks {
   it should "enable BigDecimalOps - faculty" in {
     forAll(faculties) {
       (n: Int, fac: Int) =>
-        BigDecimal(n).faculty.intValue should be(fac)
+        BigDecimal(n).factorial.intValue should be(fac)
     }
   }
 
   it should "enable BigDecimalOps - faculty throw IllegalArgumentException" in {
     evaluating {
-      BigDecimal(0.5).faculty
+      BigDecimal(0.5).factorial
     } should produce[IllegalArgumentException]
   }
 
@@ -90,6 +90,7 @@ class BigDecimalMathSpec extends FlatSpec with Matchers with PropertyChecks {
     (-3.14159, 0.0),
     (0.0, 0.0),
     (3.14159, 0.0),
+    (3.14159 * 2.0, 0.0),
     (2.0 * 3.14159, 0.0),
     (3.14159 / 2.0, 1.0),
     (3.14159 * 3.0 / 2.0, -1.0),
@@ -97,7 +98,32 @@ class BigDecimalMathSpec extends FlatSpec with Matchers with PropertyChecks {
   it should "enable trigonometry - sin" in {
     forAll(sinii) {
       (x: Double, sin: Double) =>
-        BigDecimal(x).sin should be(BigDecimal(sin) +- 0.1)
+        val X = BigDecimal(x)
+        val Sin = X.sin
+        Sin should be(BigDecimal(sin) +- 0.1)
+        if (X != 0 && Sin != 0)
+          X.scale should be <= Sin.scale
     }
   }
+
+  val cosinii = Table(
+    ("x", "cos"),
+    (-3.14159 / 2.0, 0.0),
+    (0.0, 1.0),
+    (3.14159 * 2.0, 1.0),
+    (3.14159 / 2.0, 0.0),
+    (3.14159, -1.0),
+    (3.14159 * 3.0 / 2.0, 0.0),
+    (3.14159 / 3.0, 0.5))
+  it should "enable trigonometry - cos" in {
+    forAll(cosinii) {
+      (x: Double, cos: Double) =>
+        val X = BigDecimal(x)
+        val Cos = X.cos
+        Cos should be(BigDecimal(cos) +- 0.1)
+        if (X != 0 && Cos != 0)
+          X.scale should be <= Cos.scale
+    }
+  }
+
 }
