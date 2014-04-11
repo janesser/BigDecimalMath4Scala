@@ -112,9 +112,9 @@ object BigDecimalMath {
     val twoPi = Pi * 2
     val halfPi = Pi / 2
 
-    val minusOne: BigDecimal = BigDecimal(-1.0, mc).setScale(x.precision)
+    val minusOne: BigDecimal = BigDecimal(-1.0, mc).setScale(x.scale)
     val zero: BigDecimal = BigDecimal(0.0, mc)
-    val one: BigDecimal = BigDecimal(1.0, mc).setScale(x.precision)
+    val one: BigDecimal = BigDecimal(1.0, mc).setScale(x.scale)
 
     if (x == Pi) zero
     else if (x == halfPi) one
@@ -142,17 +142,16 @@ object BigDecimalMath {
     val twoPi = Pi * 2
     val halfPi = Pi / 2
 
-    val minusOne: BigDecimal = BigDecimal(-1.0, mc).setScale(x.precision)
+    val minusOne: BigDecimal = BigDecimal(-1.0, mc).setScale(x.scale)
     val zero: BigDecimal = BigDecimal(0.0, mc)
-    val one: BigDecimal = BigDecimal(1.0, mc).setScale(x.precision)
+    val one: BigDecimal = BigDecimal(1.0, mc).setScale(x.scale)
 
     if (x == twoPi) one
     else if (x == Pi) minusOne
     else if (x == halfPi) zero
     else if (x.signum < 0) cosinus(x.negate)
     else if (x > twoPi) cosinus(x - twoPi)
-    else if (x > Pi) cosinus(x - Pi)
-    else if (x > halfPi) cosinus(x - halfPi).negate
+    else if (x > Pi) cosinus(twoPi - x)
     else sinus(x + (pi(x.precision) / 2))
   }
 }

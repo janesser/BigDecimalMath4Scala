@@ -4,6 +4,7 @@ package com.github.oxlade39.scalabetfair.math
  * https://github.com/oxlade39/scala-betfair/blob/master/src/main/scala/com/github/oxlade39/scalabetfair/math/BigDecimalMath.scala
  */
 object BigDecimalMath {
+  import scala.language.implicitConversions
   implicit def toBigDecimal(decimal: String): BigDecimal = BigDecimal(decimal)
 
   def sqrt(x: BigDecimal): BigDecimal = {

@@ -12,6 +12,8 @@ class BigDecimalMathSpec extends FlatSpec with Matchers with PropertyChecks {
   import BigDecimalMath._
   import org.scalacheck.Gen
 
+  val PI = java.lang.Math.PI
+
   val posInts = for (n <- Gen.choose(1, Int.MaxValue - 1)) yield n
 
   "BigDecimalMath" should "deliver PI in appropriate precision" in {
@@ -29,9 +31,15 @@ class BigDecimalMathSpec extends FlatSpec with Matchers with PropertyChecks {
     }
   }
 
+  it should "deliver PI in best precision" in {
+    val PI = pi(PI_PRECISION)
+    PI.precision should be(PI_PRECISION)
+  }
+
   case class Square(val d: BigDecimal) {
     val sq = d * d
   }
+  
   val squares = for (d <- Gen.choose(1.0, 1e16)) yield Square(d)
 
   it should "root squares" in {
@@ -52,9 +60,12 @@ class BigDecimalMathSpec extends FlatSpec with Matchers with PropertyChecks {
 
   val faculties = Table(
     ("n", "fac"),
+    (0, 1),
+    (1, 1),
     (6, 6 * 5 * 4 * 3 * 2 * 1),
     (-5, 5 * 4 * 3 * 2 * -1))
-  it should "enable BigIntOps - faculty" in {
+    
+  it should "enable BigIntOps - factorial" in {
     forAll(faculties) {
       (n: Int, fac: Int) =>
         BigInt(n).factorial.intValue should be(fac)
@@ -62,7 +73,7 @@ class BigDecimalMathSpec extends FlatSpec with Matchers with PropertyChecks {
   }
 
   it should "enable BigDecimalOps - negate" in {
-    (d: BigDecimal) =>
+    forAll { (d: BigDecimal) =>
       val neg = d.negate
       d.abs should be(neg.abs)
       d.precision should be(neg.precision)
@@ -70,9 +81,10 @@ class BigDecimalMathSpec extends FlatSpec with Matchers with PropertyChecks {
         neg.signum should be(0)
       else
         d.signum * neg.signum should be(-1)
+    }
   }
 
-  it should "enable BigDecimalOps - faculty" in {
+  it should "enable BigDecimalOps - factorial" in {
     forAll(faculties) {
       (n: Int, fac: Int) =>
         BigDecimal(n).factorial.intValue should be(fac)
@@ -87,15 +99,17 @@ class BigDecimalMathSpec extends FlatSpec with Matchers with PropertyChecks {
 
   val sinii = Table(
     ("x", "sin"),
-    (-3.14159, 0.0),
+    (-PI, 0.0),
     (0.0, 0.0),
-    (3.14159, 0.0),
-    (3.14159 * 2.0, 0.0),
-    (2.0 * 3.14159, 0.0),
-    (3.14159 / 2.0, 1.0),
-    (3.14159 * 3.0 / 2.0, -1.0),
-    (3.14159 / 3, 0.866025))
-  it should "enable trigonometry - sin" in {
+    (PI, 0.0),
+    (PI * 2.0, 0.0),
+    (2.0 * PI, 0.0),
+    (PI / 2.0, 1.0),
+    (PI * 3.0 / 2.0, -1.0),
+    (PI / 3, 0.866025),
+    (PI * 4.0, 0.0))
+  
+    it should "enable trigonometry - sin" in {
     forAll(sinii) {
       (x: Double, sin: Double) =>
         val X = BigDecimal(x)
@@ -108,13 +122,14 @@ class BigDecimalMathSpec extends FlatSpec with Matchers with PropertyChecks {
 
   val cosinii = Table(
     ("x", "cos"),
-    (-3.14159 / 2.0, 0.0),
+    (-PI / 2.0, 0.0),
     (0.0, 1.0),
-    (3.14159 * 2.0, 1.0),
-    (3.14159 / 2.0, 0.0),
-    (3.14159, -1.0),
-    (3.14159 * 3.0 / 2.0, 0.0),
-    (3.14159 / 3.0, 0.5))
+    (PI / 2.0, 0.0),
+    (PI, -1.0),
+    (PI * 3.0 / 2.0, 0.0),
+    (PI / 3.0, 0.5),
+    (PI * 2.0, 1.0),
+    (PI * 4.0, 1.0))
   it should "enable trigonometry - cos" in {
     forAll(cosinii) {
       (x: Double, cos: Double) =>
