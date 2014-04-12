@@ -46,9 +46,6 @@ object BigDecimalMath {
    */
   def pi(precision: Int): BigDecimal = pi(new java.math.MathContext(precision))
 
-  def sqrt(x: BigDecimal): BigDecimal =
-    com.github.oxlade39.scalabetfair.math.BigDecimalMath.sqrt(x)
-
   implicit class BigIntOps(x: BigInt) {
     val MINUS_ONE = BigInt(-1)
     val ZERO = BigInt(0)
@@ -77,6 +74,9 @@ object BigDecimalMath {
     def factorial: BigDecimal =
       if (!x.isWhole) throw new IllegalArgumentException
       else x.toBigInt.factorial.toBigDecimal
+
+    def sqrt = root(x, 2)
+    def cqrt = root(x, 3)
 
     def sin = sinus(x)
     def cos = cosinus(x)
@@ -153,5 +153,47 @@ object BigDecimalMath {
     else if (x > twoPi) cosinus(x - twoPi)
     else if (x > Pi) cosinus(twoPi - x)
     else sinus(x + (pi(x.precision) / 2))
+  }
+
+  case class IterationLimitException(val x: BigDecimal, val iLimit: Int) extends Exception
+  def newton(
+    x: BigDecimal,
+    fn: BigDecimal => BigDecimal,
+    goodEnough: BigDecimal => Boolean, 
+    i: Int = 0, iLimit: Int = 1000): BigDecimal =
+
+    if (goodEnough(x)) x
+    else if (i >= iLimit) throw IterationLimitException(x, iLimit)
+    else newton(fn(x), fn, goodEnough, i + 1, iLimit)
+
+  def root(x: BigDecimal, n: Int): BigDecimal = {
+    require(n > 1)
+    val mc = new java.math.MathContext(x.precision)
+    val zero = BigDecimal(0.0, mc)
+
+    if (x < zero) {
+      if (n % 2 == 0)
+        root(x.negate, n)
+      else
+        root(x.negate, n).negate
+    } else {
+      val nth = BigDecimal(n, mc)
+
+      def iter(y: BigDecimal): BigDecimal =
+        y - ((y - (x / y.pow(n - 1))) / nth)
+
+      val eps = x.ulp.apply(mc) / nth / x / 2
+      def goodEnough(xs: BigDecimal): Boolean =
+        (xs * xs - x).abs < eps
+
+      val s = BigDecimal(Math.pow(x.doubleValue, 1.0 / n.toDouble))
+      try {
+        newton(s, iter, goodEnough).round(mc)
+      } catch {
+        case IterationLimitException(x: BigDecimal, iLimit: Int) =>
+          println(s"x: $x iLimit: $iLimit")
+          x
+      }
+    }
   }
 }
