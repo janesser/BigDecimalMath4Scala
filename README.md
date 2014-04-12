@@ -48,6 +48,26 @@ Sine (lat. *Sinus*), except for trivial cases, is interpolated by a taylor expan
 
 Cosine (lat. *Cosinus*), except for trivial cases, is based on the sinus-function.
 
+### Roots
+*Square-root* evaluated by newton-iteration.
+
+Actually unstable for _x_ very close to zero and very big numbers.
+
+## Misc.
+
+- *evalSeries* Evaluate series summation for a limited amount of components.
+
+		def evalSeries(x: BigDecimal,
+			fx: (Int) => (BigDecimal => BigDecimal),
+			n: Int)
+    
+- *newton* Approximating iteration with step limit and specific *goodEnough*.
+
+		def newton(
+			x: BigDecimal,
+			fn: BigDecimal => BigDecimal,
+			goodEnough: BigDecimal => Boolean)
+
 # Contribution
 Feel free to offer pull requests or create issues for your suggestions.
 
