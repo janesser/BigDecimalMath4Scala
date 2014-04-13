@@ -1,6 +1,7 @@
 package de.esserjan.edu
 
 object BigDecimalMath {
+  import bigdecimal.BigDecimalTools._
 
   /**
    * Euler's constant Pi.
@@ -72,7 +73,7 @@ object BigDecimalMath {
     def negate = x * MINUS_ONE
 
     def factorial: BigDecimal =
-      if (!x.isWhole) throw new IllegalArgumentException
+      if (!x.isWhole) throw new ArithmeticException
       else x.toBigInt.factorial.toBigDecimal
 
     def sqrt = root(x, 2)
@@ -81,24 +82,6 @@ object BigDecimalMath {
     def sin = sinus(x)
     def cos = cosinus(x)
     def tan = sin / cos
-  }
-
-  /**
-   * Evaluate a series given by {{fx}} at the point {{x}}.
-   *
-   * @param x evaluate at that point (precision-driver)
-   * @param fx function for the k's series-component
-   * @param n limit for series-components
-   * @param k current series-component's index (starts with 0)
-   * @param acc accumulator
-   * @return {{acc}} once {{k == n}}
-   */
-  @scala.annotation.tailrec
-  def evalSeries(x: BigDecimal,
-    fx: (Int) => (BigDecimal => BigDecimal),
-    n: Int, k: Int = 0, acc: BigDecimal = 0): BigDecimal = {
-    if (k < n) evalSeries(x, fx, n, k + 1, acc + fx(k)(x))
-    else acc.round(new java.math.MathContext(x.precision))
   }
 
   /**
@@ -154,17 +137,6 @@ object BigDecimalMath {
     else if (x > Pi) cosinus(twoPi - x)
     else sinus(x + (pi(x.precision) / 2))
   }
-
-  case class IterationLimitException(val x: BigDecimal, val iLimit: Int) extends Exception
-  def newton(
-    x: BigDecimal,
-    fn: BigDecimal => BigDecimal,
-    goodEnough: BigDecimal => Boolean, 
-    i: Int = 0, iLimit: Int = 1000): BigDecimal =
-
-    if (goodEnough(x)) x
-    else if (i >= iLimit) throw IterationLimitException(x, iLimit)
-    else newton(fn(x), fn, goodEnough, i + 1, iLimit)
 
   def root(x: BigDecimal, n: Int): BigDecimal = {
     require(n > 1)
