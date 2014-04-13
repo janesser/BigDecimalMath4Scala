@@ -41,11 +41,16 @@ class BigDecimalOpsSpec extends FlatSpec with Matchers with PropertyChecks {
     }
   }
 
+  /**
+   * hard-core test
+   * 
+   * actually causing trouble with values close to `s.ulp`
+   */
   ignore should "square-root anything" in {
     forAll {
       (s: BigDecimal) =>
         try {
-          (s * s).sqrt should be(s.abs)
+          (s * s).sqrt should be(s.abs +- s.ulp)
         } catch {
           case ex: ArithmeticException =>
             println(s"Test omitted because ($s pow 2) caused ArithmeticException: " + ex.getMessage)

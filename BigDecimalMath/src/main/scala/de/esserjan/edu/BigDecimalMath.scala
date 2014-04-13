@@ -146,8 +146,6 @@ object BigDecimalMath {
     val mc = new java.math.MathContext(x.precision)
     val zero = BigDecimal(0.0, mc)
 
-    println("x    Scale: " + x.scale + " Precision: " + x.precision)
-    
     if (x == zero) zero
     else if (x < zero) {
       if (n % 2 == 0)
@@ -178,16 +176,12 @@ object BigDecimalMath {
         }
       import scala.math.BigDecimal.RoundingMode._
       import scala.math.abs
-      val res = BigDecimal(estimatedRoot
+      /* compact by toEngineeringString() and re-parsing with power-of-ten scale */
+      BigDecimal(estimatedRoot
           //.setScale(estimatedRoot.precision - x.precision, HALF_UP)
           //.setScale(x.scale, HALF_UP)
           .round(mc)
           .underlying.toEngineeringString())
-      
-      println("root Scale: " + estimatedRoot.scale + " Precision: " + estimatedRoot.precision)
-      println("res  Scale: " + res.scale + " Precision: " + x.precision)
-
-      res
     }
   }
 }
