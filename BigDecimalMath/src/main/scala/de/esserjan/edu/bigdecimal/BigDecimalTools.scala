@@ -43,7 +43,7 @@ object BigDecimalTools {
     fn: BigDecimal => BigDecimal,
     goodEnough: BigDecimal => Boolean): BigDecimal = {
     import scala.math.min
-    val iLimit: Int = min(10 * x.precision, 5000)
+    val iLimit: Int = min(2 * x.precision, 5000)
 
     @scala.annotation.tailrec
     def newtonInternal(x: BigDecimal, i: Int = 0): BigDecimal =

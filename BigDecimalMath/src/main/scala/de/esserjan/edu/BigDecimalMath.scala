@@ -168,10 +168,11 @@ object BigDecimalMath {
           newton(s, iter, goodEnough)
         } catch {
           case NewtonLimitException(x: BigDecimal, iLimit: Int) =>
-            println(s"WARNING root($x, $n) hit iteration limit $iLimit")
+            println(s"WARNING root($x, $n) hit iteration limit $iLimit; possibly periodic result")
             x
           case NewtonArithmeticException(x: BigDecimal, ex: Throwable) =>
-            println(s"WARNING root($x, $n) hit some arithmetic exception: " + ex.getMessage)
+            val msg = ex.getMessage
+            println(s"WARNING root($x, $n) hit some arithmetic exception: $msg; possibly division by zero occured")
             x
         }
       import scala.math.BigDecimal.RoundingMode._

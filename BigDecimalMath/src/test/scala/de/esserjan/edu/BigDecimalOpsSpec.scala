@@ -34,31 +34,27 @@ class BigDecimalOpsSpec extends FlatSpec with Matchers with PropertyChecks {
     }
   }
 
-  it should "square-root some bigDecimals" in {
-    forAll(bigDecimals) {
-      (s: BigDecimal) =>
-        (s * s).sqrt should be(s.abs)
+  def testSquare = (s: BigDecimal) =>
+    try {
+      (s * s).sqrt should be(s.abs +- s.ulp)
+    } catch {
+      case ex: ArithmeticException =>
+        println(s"Test omitted because ($s pow 2) caused ArithmeticException: " + ex.getMessage)
+      case ex: NumberFormatException =>
+        println(s"Test omitted because ($s pow 2) caused NumberFormatException: " + ex.getMessage)
     }
+
+  it should "square-root some bigDecimals" in {
+    forAll(bigDecimals)(testSquare)
   }
 
-  /**
-   * hard-core test
-   * 
-   * actually causing trouble with values close to `s.ulp`
-   */
-  ignore should "square-root anything" in {
-    forAll {
-      (s: BigDecimal) =>
-        try {
-          (s * s).sqrt should be(s.abs +- s.ulp)
-        } catch {
-          case ex: ArithmeticException =>
-            println(s"Test omitted because ($s pow 2) caused ArithmeticException: " + ex.getMessage)
-          case ex: NumberFormatException =>
-            println(s"Test omitted because ($s pow 2) caused NumberFormatException: " + ex.getMessage)
-        }
-    }
+  it should "square-root +-1E150" in {
+    forAll(for (n <- Gen.choose(-1e150, 1e150)) yield BigDecimal(n))(testSquare)
   }
+  
+  it should "square-root [0,1E-150]" in {
+    forAll(for (n <- Gen.choose(0.0, 1e-150)) yield BigDecimal(n))(testSquare)
+  } 
 
   it should "cubic-root some bigDecimals" in {
     forAll(bigDecimals) {

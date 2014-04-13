@@ -49,9 +49,11 @@ Sine (lat. *Sinus*), except for trivial cases, is interpolated by a taylor expan
 Cosine (lat. *Cosinus*), except for trivial cases, is based on the sinus-function.
 
 ### Roots
-*Square-root* evaluated by newton-iteration.
+*Square-root* evaluated by newton-iteration. Safe for range [1e-150, 1e150] with precision `+- s.ulp`.
 
-Actually unstable for _x_ very close to zero and very big numbers.
+A limit cancels iteration in case the result is of periodic nature. That cancellation still guarantees the requested precision.
+
+Compaction of BigDecimal is done with reparsing `toEngineeringString()`, so that the result is deflated to some power-of-ten term.
 
 ## Misc.
 
