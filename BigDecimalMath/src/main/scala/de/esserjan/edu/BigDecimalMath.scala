@@ -83,7 +83,7 @@ object BigDecimalMath {
     def sin = sinus(x)
     def cos = cosinus(x)
     def tan = sin / cos
-    
+
     def stripTrailingZeros = BigDecimal(x.underlying.stripTrailingZeros(), mc)
   }
 
@@ -146,7 +146,10 @@ object BigDecimalMath {
     val mc = new java.math.MathContext(x.precision)
     val zero = BigDecimal(0.0, mc)
 
-    if (x < zero) {
+    println("x    Scale: " + x.scale + " Precision: " + x.precision)
+    
+    if (x == zero) zero
+    else if (x < zero) {
       if (n % 2 == 0)
         root(x.negate, n)
       else
@@ -162,13 +165,29 @@ object BigDecimalMath {
         (xs * xs - x).abs < eps
 
       val s = BigDecimal(Math.pow(x.doubleValue, 1.0 / n.toDouble))
-      try {
-        newton(s, iter, goodEnough).round(mc)
-      } catch {
-        case IterationLimitException(x: BigDecimal, iLimit: Int) =>
-          println(s"x: $x iLimit: $iLimit")
-          x
-      }
+      val estimatedRoot =
+        try {
+          newton(s, iter, goodEnough)
+        } catch {
+          case NewtonLimitException(x: BigDecimal, iLimit: Int) =>
+            println(s"WARNING root($x, $n) hit iteration limit $iLimit")
+            x
+          case NewtonArithmeticException(x: BigDecimal, ex: Throwable) =>
+            println(s"WARNING root($x, $n) hit some arithmetic exception: " + ex.getMessage)
+            x
+        }
+      import scala.math.BigDecimal.RoundingMode._
+      import scala.math.abs
+      val res = BigDecimal(estimatedRoot
+          //.setScale(estimatedRoot.precision - x.precision, HALF_UP)
+          //.setScale(x.scale, HALF_UP)
+          .round(mc)
+          .underlying.toEngineeringString())
+      
+      println("root Scale: " + estimatedRoot.scale + " Precision: " + estimatedRoot.precision)
+      println("res  Scale: " + res.scale + " Precision: " + x.precision)
+
+      res
     }
   }
 }

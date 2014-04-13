@@ -21,27 +21,41 @@ object BigDecimalTools {
     else acc.round(new java.math.MathContext(x.precision))
   }
 
-  case class IterationLimitException(val x: BigDecimal, val iLimit: Int) extends Exception
-  val ITERATION_LIMIT = 1000
+  sealed class NewtonException(lastResult: BigDecimal) extends Exception
+  case class NewtonLimitException(val x: BigDecimal, val iLimit: Int) extends NewtonException(x)
+  case class NewtonArithmeticException(val x: BigDecimal, val ex: Throwable) extends NewtonException(x)
   /**
    * @param x current approximation point
    * @param fn approximation iterator
    * @param goodEnough function to indicate when the approximation is sufficiently precise.
    * @param i iterations counter (zero-based)
-   * @param iLimit iterations limit (defaults to [[BigDecimalTools#ITERATION_LIMIT]])
+   * @param iLimit iterations limit (defaults to `min(10 * x.precision, 5000)`)
    * @return approximation point x once goodEnough
-   * @throws IterationLimitException
+   * @throws
+   * NewtonLimitException
    * 	if goodEnough isn't satisfied after `iLimit` iterations, approximation is aborted.
    *    One catcher should indicate what operation caused the overflow.
    *    The passed `x` can be used under some circumstances.
+   * NewtonArithmeticException on [[ArithmeticException]]
    */
-  @scala.annotation.tailrec
   def newton(
     x: BigDecimal,
     fn: BigDecimal => BigDecimal,
-    goodEnough: BigDecimal => Boolean,
-    i: Int = 0, iLimit: Int = ITERATION_LIMIT): BigDecimal =
-    if (goodEnough(x)) x
-    else if (i >= iLimit) throw IterationLimitException(x, iLimit)
-    else newton(fn(x), fn, goodEnough, i + 1, iLimit)
+    goodEnough: BigDecimal => Boolean): BigDecimal = {
+    import scala.math.min
+    val iLimit: Int = min(10 * x.precision, 5000)
+
+    @scala.annotation.tailrec
+    def newtonInternal(x: BigDecimal, i: Int = 0): BigDecimal =
+      if (goodEnough(x)) x
+      else if (i >= iLimit) throw NewtonLimitException(x, iLimit)
+      else newtonInternal(fn(x), i + 1)
+
+    try {
+      newtonInternal(x)
+    } catch {
+      case ex: ArithmeticException =>
+        throw NewtonArithmeticException(x, ex)
+    }
+  }
 }
