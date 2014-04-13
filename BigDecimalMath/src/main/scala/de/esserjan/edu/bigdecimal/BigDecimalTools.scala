@@ -17,7 +17,7 @@ object BigDecimalTools {
   def evalSeries(x: BigDecimal,
     fx: (Int) => (BigDecimal => BigDecimal),
     n: Int, k: Int = 0, acc: BigDecimal = 0): BigDecimal = {
-    if (k < n) evalSeries(x, fx, n, k + 1, acc + fx(k)(x))
+    if (k < n) evalSeries(x, fx, n, k + 1, fx(k)(x) + acc)
     else acc.round(new java.math.MathContext(x.precision))
   }
 
