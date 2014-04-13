@@ -10,8 +10,14 @@ object BigDecimalOpsSpec {
   case class Square(val d: BigDecimal) {
     val sq = d * d
   }
+  /**
+   * Range of squares (with positive roots).
+   */
   val squares = for (d <- Gen.choose(1.0, 1e32)) yield Square(d)
 
+  /**
+   * Generic range of positive and negative BigDecimals.
+   */
   val bigDecimals = for (n <- Gen.choose(-1e64, 1e64)) yield BigDecimal(n)
 }
 
@@ -21,7 +27,7 @@ import org.scalatest.junit.JUnitRunner
 @RunWith(classOf[JUnitRunner])
 class BigDecimalOpsSpec extends FlatSpec with Matchers with PropertyChecks {
   import BigDecimalOpsSpec._
-  
+
   "BigDecimalMath - BigDecimalOps" should "root squares" in {
     forAll(squares) { (sq: Square) =>
       sq.sq.sqrt should be(sq.d +- BigDecimal(10).pow(sq.sq.precision))
@@ -66,5 +72,14 @@ class BigDecimalOpsSpec extends FlatSpec with Matchers with PropertyChecks {
     evaluating {
       BigDecimal(0.5).factorial
     } should produce[ArithmeticException]
+  }
+
+  it should "stripTrailingZeroes" in {
+    forAll(bigDecimals) {
+      (d: BigDecimal) =>
+        val s = d.setScale(d.scale + 3)
+
+        s.stripTrailingZeros.scale should be(d.scale)
+    }
   }
 }

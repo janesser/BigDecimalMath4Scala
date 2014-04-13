@@ -68,7 +68,8 @@ object BigDecimalMath {
   }
 
   implicit class BigDecimalOps(x: BigDecimal) {
-    private[this] val MINUS_ONE: BigDecimal = new java.math.BigDecimal(-1.0, new java.math.MathContext(x.precision))
+    private[this] val mc = new java.math.MathContext(x.precision)
+    private[this] val MINUS_ONE: BigDecimal = new java.math.BigDecimal(-1.0, mc)
 
     def negate = x * MINUS_ONE
 
@@ -82,6 +83,8 @@ object BigDecimalMath {
     def sin = sinus(x)
     def cos = cosinus(x)
     def tan = sin / cos
+    
+    def stripTrailingZeros = BigDecimal(x.underlying.stripTrailingZeros(), mc)
   }
 
   /**
