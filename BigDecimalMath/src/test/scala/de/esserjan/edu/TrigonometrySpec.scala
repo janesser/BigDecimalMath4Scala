@@ -4,13 +4,13 @@ import org.scalatest._
 import org.scalacheck._
 import org.scalatest.prop.PropertyChecks
 
-import BigDecimalMath._
-
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 
 @RunWith(classOf[JUnitRunner])
 class TrigonometrySpec extends FlatSpec with Matchers with PropertyChecks {
+  import BigDecimalMath._
+  import bigdecimal.BigDecimalTrigonometry._
 
   val PI: Double = java.lang.Math.PI
 
