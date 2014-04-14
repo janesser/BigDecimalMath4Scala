@@ -4,6 +4,12 @@ object BigDecimalAnalysis {
   import de.esserjan.edu.BigDecimalMath._
   import BigDecimalTools._
 
+  /**
+   * The base of the natural logarithm in a predefined accuracy.
+   * http://www.cs.arizona.edu/icon/oddsends/e.htm
+   * The precision of the predefined constant is one less than
+   * the string's length, taking into account the decimal dot.
+   */
   private[this] val E: BigDecimal = new java.math.BigDecimal("""2.71828182845904523536028747135266249775724709369995957496696762772407663035354
 759457138217852516642742746639193200305992181741359662904357290033429526059563
 073813232862794349076323382988075319525101901157383418793070215408914993488416
@@ -28,34 +34,47 @@ object BigDecimalAnalysis {
   def e(mc: java.math.MathContext): BigDecimal =
     if (mc.getPrecision < E_PRECISION) E.round(mc)
     else if (mc.getPrecision > E_PRECISION)
-      exp(BigDecimal(1.0, mc).setScale(mc.getPrecision))
+      exp(BigDecimal(1.0, mc).setScale(mc.getPrecision - 1))
     else E
 
   def e(precision: Int): BigDecimal =
     e(new java.math.MathContext(precision))
 
+  val EXP_MIN_PRECISION = 5
   def exp(x: BigDecimal): BigDecimal = {
-    val mc = new java.math.MathContext(x.precision)
+    val mc = new java.math.MathContext(x.precision, java.math.RoundingMode.HALF_UP)
     val zero = BigDecimal(0.0, mc)
-    lazy val one = BigDecimal(1.0, mc)
+    val one = BigDecimal(1.0, mc)
+
+    require(x == zero || x.precision > EXP_MIN_PRECISION)
+
+    def n = x.precision
+
     if (x < zero)
       one / exp(x.negate)
     else if (x == zero)
       one
-    else {
-      val n = 32
+    else if (x == one) {
+      evalSeries(
+        x,
+        (n: Int) =>
+          (x: BigDecimal) =>
+            x / BigDecimal(n, mc).factorial, n)
+        .round(mc)
+    } else {
       val errorRatio =
         Range(0, 2).map(n - _).reduce((x, y) => x * y)
+
       if (x.pow(n) < errorRatio * x.ulp) {
-        def fn =
+        evalSeries(x,
           (n: Int) =>
             (x: BigDecimal) =>
-              x.pow(n) / BigDecimal(n, mc).factorial
-        // extra precision
-        evalSeries(x, fn, n).round(mc)
-      } else
-        // pull x to 1.0
-        exp(x / 10).pow(10)
+              x.pow(n) / BigDecimal(n, mc).factorial, n)
+          .round(mc)
+      } else {
+        // pull x towards 1.0
+        exp(x * 0.1).pow(10)
+      }
     }
   }
 
@@ -101,8 +120,6 @@ object BigDecimalAnalysis {
       import scala.math.abs
       /* compact by toEngineeringString() and re-parsing with power-of-ten scale */
       BigDecimal(estimatedRoot
-        //.setScale(estimatedRoot.precision - x.precision, HALF_UP)
-        //.setScale(x.scale, HALF_UP)
         .round(mc)
         .underlying.toEngineeringString())
     }
