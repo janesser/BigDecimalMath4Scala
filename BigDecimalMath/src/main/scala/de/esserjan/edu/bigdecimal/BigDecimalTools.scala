@@ -4,21 +4,28 @@ import scala.math.BigDecimal.int2bigDecimal
 
 object BigDecimalTools {
   /**
-   * Evaluate a series given by `fx` at the point `x`.
+   * Evaluate a series given by `f` at the point `x`.
    *
    * @param x evaluate at that point (precision-driver)
-   * @param fx function for the k's series-component
+   * @param f function for the k's series-component
    * @param n limit for series-components
-   * @param k current series-component's index (starts with 0)
-   * @param acc accumulator
-   * @return `acc` once `k == n`
+   * @return $$\Sum_0^{n - 1} f_k(x)$$
    */
-  @scala.annotation.tailrec
   def evalSeries(x: BigDecimal,
-    fx: (Int) => (BigDecimal => BigDecimal),
-    n: Int, k: Int = 0, acc: BigDecimal = 0): BigDecimal = {
-    if (k < n) evalSeries(x, fx, n, k + 1, fx(k)(x) + acc)
-    else acc.round(new java.math.MathContext(x.precision))
+    f: (Int) => (BigDecimal => BigDecimal),
+    n: Int): BigDecimal = {
+    val mc = new java.math.MathContext(x.precision)
+    val zero = BigDecimal(0.0, mc)
+
+    @scala.annotation.tailrec
+    def seriesInternal(k: Int = 0, acc: BigDecimal = zero): BigDecimal = {
+      val fk = f(k)
+      val fkx = fk(x)
+      if (k < n) seriesInternal(k + 1, fkx + acc)
+      else acc.round(mc)
+    }
+
+    seriesInternal()
   }
 
   sealed class NewtonException(lastResult: BigDecimal) extends Exception
