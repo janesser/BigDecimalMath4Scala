@@ -33,7 +33,7 @@ object BigDecimalMath {
 
     def factorial: BigDecimal =
       if (!x.isWhole) throw new ArithmeticException
-      else BigDecimal(x.toBigInt.factorial, mc)
+      else x.toBigInt.factorial.toBigDecimal
 
     def sqrt = root(x, 2)
     def cqrt = root(x, 3)

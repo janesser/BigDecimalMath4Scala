@@ -51,10 +51,10 @@ class BigDecimalOpsSpec extends FlatSpec with Matchers with PropertyChecks {
   it should "square-root +-1E150" in {
     forAll(for (n <- Gen.choose(-1e150, 1e150)) yield BigDecimal(n))(testSquare)
   }
-  
+
   it should "square-root [0,1E-150]" in {
     forAll(for (n <- Gen.choose(0.0, 1e-150)) yield BigDecimal(n))(testSquare)
-  } 
+  }
 
   it should "cubic-root some bigDecimals" in {
     forAll(bigDecimals) {
@@ -84,9 +84,9 @@ class BigDecimalOpsSpec extends FlatSpec with Matchers with PropertyChecks {
   }
 
   it should "factorial throw ArithmeticException" in {
-    evaluating {
+    an[ArithmeticException] should be thrownBy {
       BigDecimal(0.5).factorial
-    } should produce[ArithmeticException]
+    }
   }
 
   it should "stripTrailingZeroes" in {
