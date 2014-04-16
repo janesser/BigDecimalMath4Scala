@@ -12,7 +12,7 @@ object BigDecimalMath {
 
     def negate = x * MINUS_ONE
 
-    def toBigDecimal = BigDecimal(x)
+    def toBigDecimal(mc:java.math.MathContext) = BigDecimal(x, mc)
 
     def factorial: BigInt = {
       @scala.annotation.tailrec
@@ -33,7 +33,7 @@ object BigDecimalMath {
 
     def factorial: BigDecimal =
       if (!x.isWhole) throw new ArithmeticException
-      else x.toBigInt.factorial.toBigDecimal
+      else x.toBigInt.factorial.toBigDecimal(mc)
 
     def sqrt = root(x, 2)
     def cqrt = root(x, 3)

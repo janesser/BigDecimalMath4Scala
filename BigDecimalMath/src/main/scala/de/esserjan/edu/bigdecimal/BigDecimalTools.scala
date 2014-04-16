@@ -3,6 +3,10 @@ package de.esserjan.edu.bigdecimal
 import scala.math.BigDecimal.int2bigDecimal
 
 object BigDecimalTools {
+  trait EvalSeriesGoodEnough extends Function4[java.math.MathContext, Int, BigDecimal, BigDecimal, Boolean]
+  case class SinceIndexGoodEnough(val n: Int) extends EvalSeriesGoodEnough {
+    def apply(mc: java.math.MathContext, k: Int, fkx: BigDecimal, acc: BigDecimal): Boolean = k < n
+  }
   /**
    * Evaluate a series given by `f` at the point `x`.
    *
@@ -13,16 +17,19 @@ object BigDecimalTools {
    */
   def evalSeries(x: BigDecimal,
     f: (Int) => (BigDecimal => BigDecimal),
-    n: Int): BigDecimal = {
+    n: Int): BigDecimal = evalSeries(x, f, SinceIndexGoodEnough(n))
+  def evalSeries(x: BigDecimal,
+    f: (Int) => (BigDecimal => BigDecimal),
+    goodEnough: EvalSeriesGoodEnough) = {
     val mc = new java.math.MathContext(x.precision)
     val zero = BigDecimal(0.0, mc)
 
     @scala.annotation.tailrec
     def seriesInternal(k: Int = 0, acc: BigDecimal = zero): BigDecimal = {
       val fk = f(k)
-      val fkx = fk(x)
-      if (k < n) seriesInternal(k + 1, fkx + acc)
-      else acc.round(mc)
+      val fkx = fk(x).apply(mc)
+      if (goodEnough(mc, k, fkx, acc)) acc.round(mc)
+      else seriesInternal(k + 1, fkx + acc)
     }
 
     seriesInternal()

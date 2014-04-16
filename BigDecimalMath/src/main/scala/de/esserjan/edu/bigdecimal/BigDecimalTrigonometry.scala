@@ -77,7 +77,7 @@ object BigDecimalTrigonometry {
       evalSeries(x,
         (k: Int) =>
           (x: BigDecimal) =>
-            BigDecimal(-1).pow(k) * x.pow(2 * k + 1) / BigInt(2 * k + 1).factorial.toBigDecimal,
+            BigDecimal(-1).pow(k) * x.pow(2 * k + 1) / BigInt(2 * k + 1).factorial.toBigDecimal(mc),
         n)
     }
   }
