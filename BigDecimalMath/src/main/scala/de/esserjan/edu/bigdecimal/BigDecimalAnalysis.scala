@@ -40,14 +40,10 @@ object BigDecimalAnalysis {
   def e(precision: Int): BigDecimal =
     e(new java.math.MathContext(precision))
 
-  val EXP_MIN_PRECISION = 5
-  private[this] val EXP_PRECISION_OFFSET = 10
   def exp(x: BigDecimal): BigDecimal = {
     val mc = new java.math.MathContext(x.precision, java.math.RoundingMode.FLOOR)
     val zero = BigDecimal(0.0, mc)
     val one = BigDecimal(1.0, mc)
-
-    require(x == zero || x.precision > EXP_MIN_PRECISION)
 
     def evalExp(x: BigDecimal): BigDecimal = {
       def fn =
@@ -70,7 +66,9 @@ object BigDecimalAnalysis {
       one / exp(x.negate)
     else if (x == zero)
       one
-    else
+    else /*if (x > one)
+      exp(x * 0.1).pow(10)
+    else*/
       evalExp(x)
   }
 
