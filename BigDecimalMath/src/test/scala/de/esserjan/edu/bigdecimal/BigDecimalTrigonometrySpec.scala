@@ -24,9 +24,9 @@ class BigDecimalTrigonometrySpec extends FlatSpec with Matchers with PropertyChe
       } else if (n == PI_PRECISION) {
         pi(mc).precision should be(PI_PRECISION)
       } else /*(n > PI_PRECISION)*/ {
-        evaluating {
+        an[NotImplementedError] should be thrownBy {
           pi(mc)
-        } should produce[NotImplementedError]
+        } 
       }
     }
   }

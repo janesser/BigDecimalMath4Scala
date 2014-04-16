@@ -5,7 +5,7 @@ import scala.math.BigDecimal.int2bigDecimal
 object BigDecimalTools {
   trait EvalSeriesGoodEnough extends Function4[java.math.MathContext, Int, BigDecimal, BigDecimal, Boolean]
   case class SinceIndexGoodEnough(val n: Int) extends EvalSeriesGoodEnough {
-    def apply(mc: java.math.MathContext, k: Int, fkx: BigDecimal, acc: BigDecimal): Boolean = k < n
+    def apply(mc: java.math.MathContext, k: Int, fkx: BigDecimal, acc: BigDecimal): Boolean = k > n
   }
   /**
    * Evaluate a series given by `f` at the point `x`.
