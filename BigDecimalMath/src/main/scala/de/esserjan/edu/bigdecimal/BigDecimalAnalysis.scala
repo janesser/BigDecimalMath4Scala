@@ -41,41 +41,37 @@ object BigDecimalAnalysis {
     e(new java.math.MathContext(precision))
 
   val EXP_MIN_PRECISION = 5
+  private[this] val EXP_PRECISION_OFFSET = 10
   def exp(x: BigDecimal): BigDecimal = {
-    val mc = new java.math.MathContext(x.precision, java.math.RoundingMode.HALF_UP)
+    val mc = new java.math.MathContext(x.precision, java.math.RoundingMode.FLOOR)
     val zero = BigDecimal(0.0, mc)
     val one = BigDecimal(1.0, mc)
 
     require(x == zero || x.precision > EXP_MIN_PRECISION)
 
-    def n = x.precision
+    def evalExp(x: BigDecimal): BigDecimal = {
+      def fn =
+        if (x == one)
+          (k: Int) =>
+            (x: BigDecimal) =>
+              x / BigInt(k).factorial.toBigDecimal(mc)
+        else // 
+          (k: Int) =>
+            (x: BigDecimal) =>
+              x.pow(k) / BigInt(k).factorial.toBigDecimal(mc)
+
+      case object SufficientlyPreciseGoodEnough extends EvalSeriesGoodEnough {
+        def apply(mc: java.math.MathContext, k: Int, fkx: BigDecimal, acc: BigDecimal) = (fkx + acc).round(mc) == acc.round(mc)
+      }
+      evalSeries(x, fn, SufficientlyPreciseGoodEnough)
+    }
 
     if (x < zero)
       one / exp(x.negate)
     else if (x == zero)
       one
-    else if (x == one) {
-      evalSeries(
-        x,
-        (n: Int) =>
-          (x: BigDecimal) =>
-            x / BigDecimal(n, mc).factorial, n)
-        .round(mc)
-    } else {
-      val errorRatio =
-        Range(0, 2).map(n - _).reduce((x, y) => x * y)
-
-      if (x.pow(n) < errorRatio * x.ulp) {
-        evalSeries(x,
-          (n: Int) =>
-            (x: BigDecimal) =>
-              x.pow(n) / BigDecimal(n, mc).factorial, n)
-          .round(mc)
-      } else {
-        // pull x towards 1.0
-        exp(x * 0.1).pow(10)
-      }
-    }
+    else
+      evalExp(x)
   }
 
   def ln(x: BigDecimal): BigDecimal = ???

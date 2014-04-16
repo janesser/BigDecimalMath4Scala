@@ -38,19 +38,20 @@ class BigDecimalAnalysisSpec extends FlatSpec with Matchers with PropertyChecks 
   it should "provide equal E rounded and calculated" in {
     forAll(posIntsUpToEPrecision) {
       (precision: Int) =>
-        whenever(precision > EXP_MIN_PRECISION) {
+          println(s"precision: $precision")
           val mc = new java.math.MathContext(precision)
 
           val x = BigDecimal(1.0, mc).setScale(precision - 1)
           val Ecalc = exp(x)
           val Erounded = e(precision)
 
+          val error = Ecalc - Erounded
+          val xUlp = Ecalc.ulp
+          println(s"Ecalc:  $Ecalc\nEroun:  $Erounded\nerror:  $error\nxUlp:   $xUlp")
+
           Erounded.precision should be(precision)
           Ecalc.precision should be(precision)
-
-          val error = Ecalc - Erounded
-          error should be <= (x.ulp.cqrt * 2)
-        }
+          error.abs should be <= x.ulp
     }
   }
 
@@ -66,8 +67,7 @@ class BigDecimalAnalysisSpec extends FlatSpec with Matchers with PropertyChecks 
     forAll(exps) {
       (x: BigDecimal, e: BigDecimal) =>
         val error: BigDecimal = exp(x) - e
-
-        error should be <= e.ulp
+        error.abs should be <= x.ulp
     }
   }
 }
