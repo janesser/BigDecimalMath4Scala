@@ -4,8 +4,11 @@ import scala.math.BigDecimal.int2bigDecimal
 
 object BigDecimalTools {
   trait EvalSeriesGoodEnough extends Function4[java.math.MathContext, Int, BigDecimal, BigDecimal, Boolean]
-  case class SinceIndexGoodEnough(val n: Int) extends EvalSeriesGoodEnough {
+  case class EvalSeriesSinceIndex(val n: Int) extends EvalSeriesGoodEnough {
     def apply(mc: java.math.MathContext, k: Int, fkx: BigDecimal, acc: BigDecimal): Boolean = k > n
+  }
+  case object EvalSeriesPrecise extends EvalSeriesGoodEnough {
+    def apply(mc: java.math.MathContext, k: Int, fkx: BigDecimal, acc: BigDecimal) = (fkx + acc).round(mc) == acc.round(mc)
   }
   /**
    * Evaluate a series given by `f` at the point `x`.
@@ -17,7 +20,7 @@ object BigDecimalTools {
    */
   def evalSeries(x: BigDecimal,
     f: (Int) => (BigDecimal => BigDecimal),
-    n: Int): BigDecimal = evalSeries(x, f, SinceIndexGoodEnough(n))
+    n: Int): BigDecimal = evalSeries(x, f, EvalSeriesSinceIndex(n))
   def evalSeries(x: BigDecimal,
     f: (Int) => (BigDecimal => BigDecimal),
     goodEnough: EvalSeriesGoodEnough) = {
@@ -58,7 +61,7 @@ object BigDecimalTools {
       else false
     }
   }
-  case class NewtonResultPrecise(fn: BigDecimal => BigDecimal, precision: BigDecimal) extends NewtonGoodEnough {    
+  case class NewtonResultPrecise(fn: BigDecimal => BigDecimal, precision: BigDecimal) extends NewtonGoodEnough {
     def apply(i: Int, x: BigDecimal): Boolean = {
       val mc = new java.math.MathContext(x.precision)
 

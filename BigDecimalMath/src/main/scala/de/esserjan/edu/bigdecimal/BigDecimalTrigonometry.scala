@@ -66,9 +66,9 @@ object BigDecimalTrigonometry {
     if (x == Pi) zero
     else if (x == halfPi) one
     else if (x == halfPi * 3) minusOne
-    else if (x.signum < 0) sinus(x.negate).negate
+    else if (x.signum < 0) sinus(x.neg).neg
     else if (x > twoPi) sinus(x - twoPi)
-    else if (x > Pi) sinus(x - Pi).negate
+    else if (x > Pi) sinus(x - Pi).neg
     else {
       /*
        * x^(2k+1) < x.ulp; (2k+1)*log10(x) < -x.precision; 2k*log10(x)< -x.precision;
@@ -96,7 +96,7 @@ object BigDecimalTrigonometry {
     if (x == twoPi) one
     else if (x == Pi) minusOne
     else if (x == halfPi) zero
-    else if (x.signum < 0) cosinus(x.negate)
+    else if (x.signum < 0) cosinus(x.neg)
     else if (x > twoPi) cosinus(x - twoPi)
     else if (x > Pi) cosinus(twoPi - x)
     else sinus(x + (pi(x.precision) / 2))

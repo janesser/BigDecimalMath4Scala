@@ -45,8 +45,12 @@ object BigDecimalAnalysis {
     val zero = BigDecimal(0.0, mc)
     val one = BigDecimal(1.0, mc)
 
-    def evalExp(x: BigDecimal): BigDecimal = {
-      def fn =
+    if (x < zero)
+      one / exp(x.neg)
+    else if (x == zero)
+      one
+    else {
+      def f =
         if (x == one)
           (k: Int) =>
             (x: BigDecimal) =>
@@ -56,25 +60,31 @@ object BigDecimalAnalysis {
             (x: BigDecimal) =>
               x.pow(k) / BigInt(k).factorial.toBigDecimal(mc)
 
-      case object SufficientlyPreciseGoodEnough extends EvalSeriesGoodEnough {
-        def apply(mc: java.math.MathContext, k: Int, fkx: BigDecimal, acc: BigDecimal) = (fkx + acc).round(mc) == acc.round(mc)
-      }
-      evalSeries(x, fn, SufficientlyPreciseGoodEnough)
+      evalSeries(x, f, EvalSeriesPrecise)
     }
-
-    if (x < zero)
-      one / exp(x.negate)
-    else if (x == zero)
-      one
-    else /*if (x > one)
-      exp(x * 0.1).pow(10)
-    else*/
-      evalExp(x)
   }
 
-  def ln(x: BigDecimal): BigDecimal = ???
-  def lb(x: BigDecimal): BigDecimal = ???
-  def log(x: BigDecimal): BigDecimal = ???
+  def ln(x: BigDecimal): BigDecimal = {
+    val mc = new java.math.MathContext(x.precision, java.math.RoundingMode.FLOOR)
+    val minusOne = BigDecimal(-1.0, mc)
+    val zero = BigDecimal(0.0, mc)
+    val one = BigDecimal(1.0, mc)
+
+    if (x == one)
+      zero
+    else if (x < zero)
+      ln(x.neg).inv
+    else {
+      def f =
+        (k: Int) =>
+          (x: BigDecimal) =>
+            if (k == 0) zero
+            else (if (k % 2 == 0) minusOne else one) *
+              (x - 1).pow(k) / BigDecimal(k, mc)
+
+      evalSeries(x, f, EvalSeriesPrecise)
+    }
+  }
 
   def root(x: BigDecimal, n: Int): BigDecimal = {
     require(n > 1)
@@ -84,9 +94,9 @@ object BigDecimalAnalysis {
     if (x == zero) zero
     else if (x < zero) {
       if (n % 2 == 0)
-        root(x.negate, n)
+        root(x.neg, n)
       else
-        root(x.negate, n).negate
+        root(x.neg, n).neg
     } else {
       val nth = BigDecimal(n, mc)
 
