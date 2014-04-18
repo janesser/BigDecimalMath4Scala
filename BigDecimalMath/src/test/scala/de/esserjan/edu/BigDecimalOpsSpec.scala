@@ -12,41 +12,40 @@ import org.scalatest.junit.JUnitRunner
 @RunWith(classOf[JUnitRunner])
 class BigDecimalOpsSpec extends FlatSpec with Matchers with PropertyChecks {
 
-  "BigDecimalMath - BigDecimalOps" should "square-root big decimals" in {
-    (s: BigDecimal) =>
-      try {
-        val square = s * s
-        (square.sqrt - s.abs).abs should be <= square.ulp
-      } catch {
-        case ex: ArithmeticException =>
-          println(s"Test omitted because ($s pow 2) caused ArithmeticException: " + ex.getMessage)
-        case ex: NumberFormatException =>
-          println(s"Test omitted because ($s pow 2) caused NumberFormatException: " + ex.getMessage)
-      }
-  }
-
-  it should "cubic-root big decimals" in {
-    (s: BigDecimal) =>
-      try {
-        val cubic = s * s * s
-        (cubic.cqrt.abs - s.abs).abs should be <= cubic.ulp
-      } catch {
-        case ex: ArithmeticException =>
-          println(s"Test omitted because ($s pow 2) caused ArithmeticException: " + ex.getMessage)
-        case ex: NumberFormatException =>
-          println(s"Test omitted because ($s pow 2) caused NumberFormatException: " + ex.getMessage)
-      }
-  }
-
-  it should "negate" in {
+  "BigDecimalOps" should "neg" in {
     forAll { (d: BigDecimal) =>
-      val neg = d.negate
+      val neg = d.neg
       d.abs should be(neg.abs)
       d.precision should be(neg.precision)
       if (d.signum == neg.signum)
         neg.signum should be(0)
       else
         d.signum * neg.signum should be(-1)
+    }
+  }
+
+  it should "inv" in {
+    forAll {
+      (d: BigDecimal) =>
+        val mc = new java.math.MathContext(d.precision)
+        val zero = BigDecimal(0, 0, mc)
+        val one = BigDecimal(1.0, mc)
+
+        try {
+          if (d.invertible) {
+            val inv = d.inv
+
+            inv.precision should be(d.precision)
+            (inv * d) should be(one +- d.ulp)
+          } else {
+            an[ArithmeticException] should be thrownBy {
+              zero.inv
+            }
+          }
+        } catch {
+          case ex: ArithmeticException =>
+            println(s"Test omitted ($d.inv) because caught ArithmeticException: " + ex.getMessage)
+        }
     }
   }
 

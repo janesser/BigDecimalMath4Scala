@@ -12,7 +12,7 @@ object BigDecimalMath {
 
     def negate = x * MINUS_ONE
 
-    def toBigDecimal(mc:java.math.MathContext) = BigDecimal(x, mc)
+    def toBigDecimal(mc: java.math.MathContext) = BigDecimal(x, mc)
 
     def factorial: BigInt = {
       @scala.annotation.tailrec
@@ -28,8 +28,16 @@ object BigDecimalMath {
   implicit class BigDecimalOps(x: BigDecimal) {
     private[this] val mc = new java.math.MathContext(x.precision)
     private[this] val MINUS_ONE: BigDecimal = new java.math.BigDecimal(-1.0, mc)
+    private[this] val ZERO: BigDecimal = new java.math.BigDecimal(0.0, mc)
+    private[this] val ONE: BigDecimal = new java.math.BigDecimal(1.0, mc)
 
-    def negate = x * MINUS_ONE
+    def neg = x * MINUS_ONE
+
+    def invertible: Boolean = x != ZERO && Range(1,1024).isDefinedAt(x.scale)
+    def inv =
+      if (!invertible)
+        throw new ArithmeticException(s"$x is not invertible")
+      else x.pow(-1).round(mc)
 
     def factorial: BigDecimal =
       if (!x.isWhole) throw new ArithmeticException
