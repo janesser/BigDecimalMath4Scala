@@ -69,9 +69,14 @@ The approximation is dynamically continued until the precision reaches the input
 ### Exp
 *Exp*, except for trivial cases, is interpolated by a taylor expansion.
 
+		BigDecimal(x).exp
+
+*Ln*, except for trivial cases, is interpolated by a taylor expansion.
+
+		BigDecimal(x).ln
+
 The approximation is dynamically continued until the precision reaches the input's ULP.
 
-TODO logarithmics
 ## Misc.
 ### BigDecimalTools
 Some generic computation algorithms.

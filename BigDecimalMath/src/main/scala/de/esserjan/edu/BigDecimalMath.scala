@@ -49,6 +49,9 @@ object BigDecimalMath {
     def sin = sinus(x)
     def cos = cosinus(x)
     def tan = sin / cos
+    
+    def exp = bigdecimal.BigDecimalAnalysis.exp(x)
+    def ln = bigdecimal.BigDecimalAnalysis.ln(x)
 
     def stripTrailingZeros = BigDecimal(x.underlying.stripTrailingZeros(), mc)
   }
