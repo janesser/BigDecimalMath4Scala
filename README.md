@@ -32,12 +32,12 @@ Steps to integrate:
 		import de.esserjan.edu.BigDecimalMath._
 	
 ## BigIntOps 
-*Negation* by multiplication with {{BigInt(-1)}}. As long as the number was not zero before, the result's signum multiplied with the input signum is always "-1".
+*Negation* by multiplication with `BigInt(-1)`. As long as the number was not zero before, the result's signum multiplied with the input signum is always "-1".
 
 *Factorial* with tail-recursive ideomatic implementation. A negative signum will not affect the calculation but result in a negative result.
 
 ## BigDecimalOps
-*Negation* by multiplication with {{BigDecimal(-1)}}.
+*Negation* by multiplication with `BigDecimal(-1)`.
 Last mentioned inherits MathContext from input.
 As long as the number was not zero before, the result's signum multiplied with the input signum is always "-1".
 
