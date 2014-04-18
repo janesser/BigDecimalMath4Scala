@@ -37,12 +37,20 @@ Steps to integrate:
 *Factorial* with tail-recursive ideomatic implementation. A negative signum will not affect the calculation but result in a negative result.
 
 ## BigDecimalOps
-*Negation* by multiplication with `BigDecimal(-1)`.
+*neg* by multiplication with `BigDecimal(-1)`.
 Last mentioned inherits MathContext from input.
 As long as the number was not zero before, the result's signum multiplied with the input signum is always "-1".
 
-*Factorial* based on BigInt#factorial. If not BigDecimal#isWhole this operation has no result, e.g. thows an IllegalArgumentException.
+		BigDecimal(x).neg
+		
+*inv* one by x. *invertible* indicates if *inv* may be called.
+
+		BigDecimal(x).inv
+
+*factorial* based on BigInt#factorial. If not BigDecimal#isWhole this operation has no result, e.g. thows an IllegalArgumentException.
 TODO Guess precision required for result, because it is a magnitude more than the input.
+
+		BigDecimal(x).factorial
 
 ### Trigonometry
 Sine (lat. *Sinus*), except for trivial cases, is interpolated by a taylor expansion.
@@ -77,7 +85,10 @@ Some generic goodEnough criteria are predefined.
 		case class SinceIndexGoodEnough(val n: Int) extends EvalSeriesGoodEnough {
 			def apply(mc: java.math.MathContext, k: Int, fkx: BigDecimal, acc: BigDecimal): Boolean = k > n
 		}
-
+		case object SufficientlyPreciseGoodEnough extends EvalSeriesGoodEnough {
+			def apply(mc: java.math.MathContext, k: Int, fkx: BigDecimal, acc: BigDecimal) = (fkx + acc).round(mc) == acc.round(mc)
+		}
+		
 		def evalSeries(x: BigDecimal,
 			f: (Int) => (BigDecimal => BigDecimal),
 			goodEnough: EvalSeriesGoodEnough):BigDecimal
