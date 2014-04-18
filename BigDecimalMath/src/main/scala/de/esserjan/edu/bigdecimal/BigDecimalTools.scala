@@ -13,7 +13,7 @@ object BigDecimalTools {
    * @param x evaluate at that point (precision-driver)
    * @param f function for the k's series-component
    * @param n limit for series-components
-   * @return $$\Sum_0^{n - 1} f_k(x)$$
+   * @return $$\Sum_0^n f_k(x)$$
    */
   def evalSeries(x: BigDecimal,
     f: (Int) => (BigDecimal => BigDecimal),
@@ -37,39 +37,57 @@ object BigDecimalTools {
 
   sealed class NewtonException(lastResult: BigDecimal) extends Exception
   case class NewtonLimitException(val x: BigDecimal, val iLimit: Int) extends NewtonException(x)
-  case class NewtonArithmeticException(val x: BigDecimal, val ex: Throwable) extends NewtonException(x)
+
+  trait NewtonGoodEnough extends Function2[Int, BigDecimal, Boolean]
+  case class NewtonGoodEnoughWrapper(goodEnough: (Int, BigDecimal) => Boolean) extends NewtonGoodEnough {
+    def this(goodEnough: (BigDecimal) => Boolean) =
+      this((i: Int, x: BigDecimal) => goodEnough(x))
+    def apply(i: Int, x: BigDecimal): Boolean = goodEnough(i, x)
+  }
+  import scala.language.implicitConversions
+  implicit def goodEnoughFunction1(goodEnough: (BigDecimal) => Boolean) = new NewtonGoodEnoughWrapper(goodEnough)
+  implicit def goodEnoughFunction2(goodEnough: (Int, BigDecimal) => Boolean) = NewtonGoodEnoughWrapper(goodEnough)
+
+  case class NewtonCombinedGoodEnough(ge: NewtonGoodEnough*) extends NewtonGoodEnough {
+    def apply(i: Int, x: BigDecimal): Boolean = ge map { _(i, x) } reduce { (x, y) => x || y }
+  }
+
+  case class NewtonIterationLimit(iLimit: Int) extends NewtonGoodEnough {
+    def apply(i: Int, x: BigDecimal): Boolean = {
+      if (i > iLimit) throw NewtonLimitException(x, iLimit)
+      else false
+    }
+  }
+  case class NewtonResultPrecise(fn: BigDecimal => BigDecimal, precision: BigDecimal) extends NewtonGoodEnough {    
+    def apply(i: Int, x: BigDecimal): Boolean = {
+      val mc = new java.math.MathContext(x.precision)
+
+      val delta = x - fn(x)
+      delta.abs <= precision
+    }
+  }
+
   /**
+   * Newton-approximation, caller has to check for convergence.
+   * Use [[NewtonIterationLimit]] in case of doubts.
+   *
    * @param x current approximation point
    * @param fn approximation iterator
    * @param goodEnough function to indicate when the approximation is sufficiently precise.
    * @param i iterations counter (zero-based)
-   * @param iLimit iterations limit (defaults to `min(10 * x.precision, 5000)`)
    * @return approximation point x once goodEnough
-   * @throws
-   * NewtonLimitException
-   * 	if goodEnough isn't satisfied after `iLimit` iterations, approximation is aborted.
-   *    One catcher should indicate what operation caused the overflow.
-   *    The passed `x` can be used under some circumstances.
-   * NewtonArithmeticException on [[ArithmeticException]]
+   * @throws NewtonException
    */
   def newton(
     x: BigDecimal,
     fn: BigDecimal => BigDecimal,
-    goodEnough: BigDecimal => Boolean): BigDecimal = {
-    import scala.math.min
-    val iLimit: Int = min(2 * x.precision, 5000)
+    goodEnough: NewtonGoodEnough): BigDecimal = {
 
     @scala.annotation.tailrec
     def newtonInternal(x: BigDecimal, i: Int = 0): BigDecimal =
-      if (goodEnough(x)) x
-      else if (i >= iLimit) throw NewtonLimitException(x, iLimit)
+      if (goodEnough(i, x)) x
       else newtonInternal(fn(x), i + 1)
 
-    try {
-      newtonInternal(x)
-    } catch {
-      case ex: ArithmeticException =>
-        throw NewtonArithmeticException(x, ex)
-    }
+    newtonInternal(x)
   }
 }
