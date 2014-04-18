@@ -20,7 +20,33 @@ class BigDecimalAnalysisSpec extends FlatSpec with Matchers with PropertyChecks 
 
   import BigDecimalAnalysisSpec._
 
-  "BigDecimalAnalysis" should "provide E in every (available) precision" in {
+  "BigDecimalAnalysis" should "square-root big decimals" in {
+    (s: BigDecimal) =>
+      try {
+        val square = s * s
+        (square.sqrt - s.abs).abs should be <= square.ulp
+      } catch {
+        case ex: ArithmeticException =>
+          println(s"Test omitted because ($s pow 2) caused ArithmeticException: " + ex.getMessage)
+        case ex: NumberFormatException =>
+          println(s"Test omitted because ($s pow 2) caused NumberFormatException: " + ex.getMessage)
+      }
+  }
+
+  it should "cubic-root big decimals" in {
+    (s: BigDecimal) =>
+      try {
+        val cubic = s * s * s
+        (cubic.cqrt.abs - s.abs).abs should be <= cubic.ulp
+      } catch {
+        case ex: ArithmeticException =>
+          println(s"Test omitted because ($s pow 2) caused ArithmeticException: " + ex.getMessage)
+        case ex: NumberFormatException =>
+          println(s"Test omitted because ($s pow 2) caused NumberFormatException: " + ex.getMessage)
+      }
+  }
+
+  it should "provide E in every (available) precision" in {
     forAll(posIntsUpToEPrecision) {
       (precision: Int) =>
         e(precision).precision should be(precision)
