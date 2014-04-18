@@ -26,7 +26,7 @@ class BigDecimalTrigonometrySpec extends FlatSpec with Matchers with PropertyChe
       } else /*(n > PI_PRECISION)*/ {
         an[NotImplementedError] should be thrownBy {
           pi(mc)
-        } 
+        }
       }
     }
   }
@@ -78,5 +78,26 @@ class BigDecimalTrigonometrySpec extends FlatSpec with Matchers with PropertyChe
         if (X != 0 && Cos != 0)
           X.scale should be <= Cos.scale
     }
+  }
+
+  it should "cos^2 + sin^2 = 1" in {
+    forAll(for (n <- Gen.choose(0.0, 2.0 * java.lang.Math.PI)) yield BigDecimal(n)) {
+      (r: BigDecimal) =>
+        val mc = new java.math.MathContext(r.precision, java.math.RoundingMode.FLOOR)
+        val zero = BigDecimal(0.0, mc)
+        val one = BigDecimal(1.0, mc)
+
+        val cr = r.cos
+        val sr = r.sin
+
+        val cr2 = cr * cr
+        val sr2 = sr * sr
+
+        val sum = cr2 + sr2
+
+        /* precision < 2 * ULP */
+        sum.round(mc) should be(one +- r.ulp * 2)
+    }
+
   }
 }

@@ -73,12 +73,12 @@ object BigDecimalTrigonometry {
       /*
        * x^(2k+1) < x.ulp; (2k+1)*log10(x) < -x.precision; 2k*log10(x)< -x.precision;
        */
-      val n: Int = (x.precision / java.lang.Math.log10(x.doubleValue)).toInt / 2
+      lazy val n: Int = (x.precision / java.lang.Math.log10(x.doubleValue)).toInt / 2
       evalSeries(x,
         (k: Int) =>
           (x: BigDecimal) =>
             BigDecimal(-1).pow(k) * x.pow(2 * k + 1) / BigInt(2 * k + 1).factorial.toBigDecimal(mc),
-        n)
+        EvalSeriesPrecise)
     }
   }
 
