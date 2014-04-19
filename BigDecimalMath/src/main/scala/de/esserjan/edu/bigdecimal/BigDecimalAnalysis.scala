@@ -70,19 +70,17 @@ object BigDecimalAnalysis {
     val zero = BigDecimal(0.0, mc)
     val one = BigDecimal(1.0, mc)
 
-    if (x == one)
+    if (x < zero)
+      throw new IllegalArgumentException
+    else if (x == one)
       zero
-    else if (x < zero)
-      ln(x.neg).inv
     else {
-      def f =
+      def hyperbolicF =
         (k: Int) =>
           (x: BigDecimal) =>
-            if (k == 0) zero
-            else (if (k % 2 == 0) minusOne else one) *
-              (x - 1).pow(k) / BigDecimal(k, mc)
+            ((x - one) / (x + one)).pow(1 + 2 * k) / BigDecimal(1 + 2 * k, mc)
 
-      evalSeries(x, f, EvalSeriesPrecise)
+      evalSeries(x, hyperbolicF, EvalSeriesPrecise) * 2
     }
   }
 
