@@ -1,4 +1,4 @@
-# BigDecimal Arithmetics for Scala
+# BigDecimal Arithmetics for Scala (BigDecimalMath4Scala)
 Be as precise as you like (or as much as you can afford in terms of runtime).
 BigDecimal precision is maintained throughout calculations. That means function parameter and result have equal scale. ZERO is a special case anyway.
 
