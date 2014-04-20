@@ -2,7 +2,7 @@
 Be as precise as you like (or as much as you can afford in terms of runtime).
 BigDecimal precision is maintained throughout calculations. That means function parameter and result have equal scale. ZERO is a special case anyway.
 
-Actually scala.math.BigDecimal and alike are almost equal (or worse) than their Java correspondants. 
+Actually [scala.math.BigDecimal](http://www.scala-lang.org/api/2.10.4/index.html#scala.math.BigDecimal) and alike are almost equal (or worse) than their Java correspondants [java.math.BigDecimal](http://docs.oracle.com/javase/7/docs/api/java/math/BigDecimal.html). 
 Having some functional structures at hand may improve the way to think about computating formulas.
 
 Intention of this extending library is:
@@ -10,6 +10,7 @@ Intention of this extending library is:
 * to make use of BigDecimal easier
 * to make code more fluent to read
 * to give control over the scale and precision of calculation
+* to provide a rich feature set of numeric computations (which match the every requested precision).
 
 Steps to integrate:
 
@@ -118,10 +119,10 @@ Some generic goodEnough criteria are predefined.
 			goodEnough: NewtonGoodEnough): BigDecimal
 
 # Licence
-TODO Apache Licence?
+BigDecimalMath is provided to you as free software under the [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.html).
 
 # Releases
-0.0.1 *work in progress* Q2'14 with some basic set of operations.
+0.0.1 *work in progress* Q2'14 with a basic set of operations.
 
 # Contribution
 Feel free to offer pull requests or create issues for your suggestions.
@@ -135,3 +136,5 @@ Feel free to offer pull requests or create issues for your suggestions.
 Based on [A Java Math.BigDecimal Implementation of Core Mathematical Functions](http://arxiv.org/abs/0908.3030).
 
 Inspired by [BigDecimalMath.scala](https://gist.github.com/oxlade39/5752033).
+
+Similar to [Spire](https://github.com/non/spire).
