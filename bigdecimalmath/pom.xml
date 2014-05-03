@@ -5,17 +5,37 @@
 	<description>Extended BigDecimal Arithmetics and Computations for Scala</description>
 	<inceptionYear>2014</inceptionYear>
 
-	<properties>
-		<maven.compiler.source>1.6</maven.compiler.source>
-		<maven.compiler.target>1.6</maven.compiler.target>
-		<encoding>UTF-8</encoding>
-		<scala.tools.version>2.10</scala.tools.version>
-		<scala.version>2.10.3</scala.version>
-	</properties>
+	<contributors>
+		<contributor>
+			<name>Jan Esser</name>
+			<email>JEsser@gmx.de</email>
+			<roles>
+				<role>DEV</role>
+			</roles>
+			<properties>
+				<twitter.name>@januszesser</twitter.name>
+			</properties>
+		</contributor>
+	</contributors>
 
-	<groupId>de.esserjan.scala</groupId>
-	<artifactId>bigdecimalmath_${scala.tools.version}</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<licenses>
+		<license>
+			<name>Apache License, Version 2.0</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.html</url>
+		</license>
+	</licenses>
+
+	<scm>
+		<url>http://bitbucket.org/janesser/bigdecimalmath/src</url>
+		<connection>scm:git:https://bitbucket.org/janesser/bigdecimalmath.git</connection>
+		<developerConnection>scm:git:https://janesser@bitbucket.org/janesser/bigdecimalmath.git</developerConnection>
+	</scm>
+
+	<issueManagement>
+		<system>BitBucket JIRA</system>
+		<url>https://bitbucket.org/janesser/bigdecimalmath/issues</url>
+	</issueManagement>
+
 
 	<distributionManagement>
 		<snapshotRepository>
@@ -34,16 +54,17 @@
 		</site>
 	</distributionManagement>
 
-	<scm>
-		<url>http://bitbucket.org/janesser/bigdecimalmath/src</url>
-		<connection>scm:git:https://bitbucket.org/janesser/bigdecimalmath.git</connection>
-		<developerConnection>scm:git:https://janesser@bitbucket.org/janesser/bigdecimalmath.git</developerConnection>
-	</scm>
+	<properties>
+		<maven.compiler.source>1.6</maven.compiler.source>
+		<maven.compiler.target>1.6</maven.compiler.target>
+		<encoding>UTF-8</encoding>
+		<scala.tools.version>2.10</scala.tools.version>
+		<scala.version>2.10.3</scala.version>
+	</properties>
 
-	<issueManagement>
-		<system>BitBucket JIRA</system>
-		<url>https://bitbucket.org/janesser/bigdecimalmath/issues</url>
-	</issueManagement>
+	<groupId>de.esserjan.scala</groupId>
+	<artifactId>bigdecimalmath_${scala.tools.version}</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
 
 	<dependencyManagement>
 		<dependencies>
