@@ -26,7 +26,7 @@ import BigIntOpsSpec._
   "BigDecimalMath - BigIntOps" should "negate" in {
     forAll { (i: BigInt) =>
       whenever(i != 0) {
-        val neg = i.negate
+        val neg = i.neg
         neg.abs should be(i.abs)
         neg.signum * i.signum should be(-1)
       }
