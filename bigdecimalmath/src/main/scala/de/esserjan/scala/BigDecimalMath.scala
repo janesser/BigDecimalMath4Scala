@@ -46,8 +46,26 @@ object BigDecimalMath {
 
   /**
    * All operations are computed with the precision/scale of given `x`.
+   * 
+   * 
+   * [[java.lang.OutOfMemoryError]] may occur for some edge cases, like e.g. -1E123456 or 1E-123456.
+   * Within computations the scale is maintained stable. Almost every computation will cause `x` to inflate.
+   *
    * Every result should be approximately `error(func(x)) +- x.ulp ~ 0` if no other approximation is given.
-   * @param x the wrapped [[scala.math.BigDecimal]]
+   * See corresponding [[PropertySpec]] for more detail.
+   *
+   *
+   * Properties that require double precision to match above result quality:
+   *
+   * `x.ln.exp == x.ln.exp`
+   *
+   * `x * x.inv == 1`
+   *
+   * `x.cos.pow(2) + x.sin.pow(2) == 1`
+   *
+   * TBC
+   *
+   * @param [[scala.math.BigDecimal]] x
    */
   implicit class BigDecimalOps(x: BigDecimal) {
     private[this] val mc = new java.math.MathContext(x.precision)
@@ -63,22 +81,20 @@ object BigDecimalMath {
     def neg = x * MINUS_ONE
 
     /**
-     * `x` is invertible (and its inverse has a [[BigDecimal]]-representation)
-     * if it is non-zero and has limited scale <= 1024.
-     *
-     * @return `true` if x is invertible.
-     */
-    def invertible: Boolean = x != ZERO && Range(1, 1024).isDefinedAt(x.scale)
-    /**
      * Multiplicative inverse of `x` as long as the inverse exists and is representable.
-     * 
+     *
      * @return `x^{-1}
      * @throws ArithmeticException on non-invertible `x``
      */
-    def inv =
-      if (!invertible)
-        throw new ArithmeticException(s"$x is not invertible")
-      else x.pow(-1).round(mc)
+    def inv = {
+      // double precision of internal computation
+      val X = x.setScale(2 * x.precision)
+      val i = ONE / X
+      if (i.precision < x.precision)
+        i.setScale(x.precision - 1)
+      else
+        i.round(mc)
+    }
 
     /**
      * The factorial of `x`.

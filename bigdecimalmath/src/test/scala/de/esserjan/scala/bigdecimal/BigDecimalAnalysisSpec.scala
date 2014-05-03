@@ -120,14 +120,13 @@ class BigDecimalAnalysisSpec extends FlatSpec with Matchers with PropertyChecks 
     }
   }
 
-  /*
-   * FIXME still flacky test
-   */
-  ignore should "resolve ln(exp(x)) == x" in {
-    forAll(for (n <- Gen.choose(-1.0, 1.0)) yield BigDecimal(n)) {
+  it should "resolve ln(exp(x)) == x" in {
+    val precision = 12
+    val mc = new java.math.MathContext(precision, java.math.RoundingMode.HALF_UP)
+
+    forAll(for (n <- Gen.choose(-1e-10, 1.0)) yield BigDecimal(n, mc)) {
       (x: BigDecimal) =>
-        /* precision < 200 * ULP */
-        x.exp.ln should be(x +- x.ulp * 200)
+        x.setScale(2 * precision).exp.ln should be(x +- x.ulp)
     }
   }
 }

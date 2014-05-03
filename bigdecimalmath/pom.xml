@@ -152,8 +152,6 @@
 						</goals>
 						<configuration>
 							<args>
-								<arg>-dependencyfile</arg>
-								<arg>${project.build.directory}/.scala_dependencies</arg>
 								<arg>-deprecation</arg>
 								<arg>-feature</arg>
 								<arg>-target:jvm-${maven.compiler.target}</arg>
@@ -169,9 +167,8 @@
 						</goals>
 						<configuration>
 							<args>
-								<arg>-make:transitive</arg>
-								<arg>-dependencyfile</arg>
-								<arg>${project.build.directory}/.scala_dependencies</arg>
+								<arg>-target:jvm-${maven.compiler.target}</arg>
+								<arg>-optimise</arg>
 							</args>
 						</configuration>
 					</execution>

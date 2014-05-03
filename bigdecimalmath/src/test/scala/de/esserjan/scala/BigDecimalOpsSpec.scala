@@ -25,26 +25,20 @@ class BigDecimalOpsSpec extends FlatSpec with Matchers with PropertyChecks {
   }
 
   it should "inv" in {
-    forAll {
-      (d: BigDecimal) =>
-        val mc = new java.math.MathContext(d.precision)
-        val zero = BigDecimal(0, 0, mc)
-        val one = BigDecimal(1.0, mc)
+    val precision = 32
+    val mc = new java.math.MathContext(precision)
 
+    val one = BigDecimal(1.0, mc)
+
+    forAll(for (n <- Gen.choose(-1e32, 1e32)) yield BigDecimal(n, mc)) {
+      (x: BigDecimal) =>
         try {
-          if (d.invertible) {
-            val inv = d.inv
+          val inv = x.inv
 
-            inv.precision should be(d.precision)
-            (inv * d) should be(one +- d.ulp)
-          } else {
-            an[ArithmeticException] should be thrownBy {
-              zero.inv
-            }
-          }
+          (inv * x) should be(one +- x.ulp)
         } catch {
           case ex: ArithmeticException =>
-            println(s"Test omitted ($d.inv) because caught ArithmeticException: " + ex.getMessage)
+            println(s"Test omitted ($x.inv) because caught ArithmeticException: " + ex.getMessage)
         }
     }
   }

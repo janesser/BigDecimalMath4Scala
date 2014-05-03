@@ -80,22 +80,25 @@ class BigDecimalTrigonometrySpec extends FlatSpec with Matchers with PropertyChe
   }
 
   it should "cos^2 + sin^2 = 1" in {
-    forAll(for (n <- Gen.choose(0.0, 2.0 * java.lang.Math.PI)) yield BigDecimal(n)) {
+    val precision = 20
+    val mc = new java.math.MathContext(precision)
+
+    val one = BigDecimal(1.0, mc)
+
+    forAll(for (n <- Gen.choose(0.0, 2.0 * java.lang.Math.PI)) yield BigDecimal(n, mc)) {
       (r: BigDecimal) =>
-        val mc = new java.math.MathContext(r.precision, java.math.RoundingMode.FLOOR)
-        val zero = BigDecimal(0.0, mc)
-        val one = BigDecimal(1.0, mc)
+        // double precision of r.sin and r.cos
+        val R = r.setScale(2 * precision)
+        
+        val cr = R.cos
+        val sr = R.sin
 
-        val cr = r.cos
-        val sr = r.sin
-
-        val cr2 = cr * cr
-        val sr2 = sr * sr
+        val cr2 = cr.pow(2)
+        val sr2 = sr.pow(2)
 
         val sum = cr2 + sr2
 
-        /* precision < 2 * ULP */
-        sum.round(mc) should be(one +- r.ulp * 2)
+        sum.round(mc) should be(one +- r.ulp)
     }
 
   }
