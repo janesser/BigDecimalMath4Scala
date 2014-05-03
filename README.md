@@ -23,8 +23,8 @@ Steps to integrate:
 - insert into to your pom.xml (or alike)
 
 		<dependency>
-			<groupId>de.esserjan.edu</groupId>
-			<artifactId>BigDecimalMath</artifactId>
+			<groupId>de.esserjan.scala</groupId>
+        		<artifactId>bigdecimalmath_2.10</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 
