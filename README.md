@@ -40,6 +40,8 @@ Steps to integrate:
 - insert into your code
 
 		import de.esserjan.scala.BigDecimalMath._
+
+ScalaDoc is available [here]{http://www.esserjan.de/scala/bigdecimalmath/site/scaladocs/index.html}.
 	
 ## BigIntOps 
 *Negation* by multiplication with `BigInt(-1)`. As long as the number was not zero before, the result's signum multiplied with the input signum is always "-1".
