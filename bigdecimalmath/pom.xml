@@ -19,30 +19,30 @@
 
 	<distributionManagement>
 		<snapshotRepository>
-			<id>bigdecimal.snapshots</id>
+			<id>esserjan.de.ssh</id>
 			<name>BigDecimalMath4Scala snapshots</name>
-			<url>https://janesser@bitbucket.org:janesser/bigdecimalmath-snapshots.git</url>
+			<url>scp://jan@esserjan.de:/home/jan/html/scala/bigdecimalmath/mvnRepo/snapshots</url>
 		</snapshotRepository>
 		<repository>
 			<id>BigDecimalMath4Scala - release</id>
 			<name>BigDecimalMath4Scala releases</name>
-			<url>${releaseRepoUrl}</url>
+			<url>scp://jan@esserjan.de:/home/jan/html/scala/bigdecimalmath/mvnRepo/releases</url>
 		</repository>
 		<site>
 			<id>BigDecimalMath4Scala - site</id>
-			<url>${siteUrl}</url>
+			<url>scp://jan@esserjan.de:/home/jan/html/scala/bigdecimalmath/site</url>
 		</site>
 	</distributionManagement>
 
 	<scm>
-		<url>http://bitbucket.org/janesser/bigdecimalmath4scala/src</url>
+		<url>http://bitbucket.org/janesser/bigdecimalmath/src</url>
 		<connection>scm:git:https://bitbucket.org/janesser/bigdecimalmath.git</connection>
 		<developerConnection>scm:git:https://janesser@bitbucket.org/janesser/bigdecimalmath.git</developerConnection>
 	</scm>
 
 	<issueManagement>
 		<system>BitBucket JIRA</system>
-		<url>https://bitbucket.org/janesser/bigdecimalmath4scala/issues</url>
+		<url>https://bitbucket.org/janesser/bigdecimalmath/issues</url>
 	</issueManagement>
 
 	<dependencyManagement>
@@ -93,13 +93,6 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
-
-	<pluginRepositories>
-		<pluginRepository>
-			<id>synergian-repo</id>
-			<url>https://raw.github.com/synergian/wagon-git/releases</url>
-		</pluginRepository>
-	</pluginRepositories>
 
 	<build>
 		<sourceDirectory>src/main/scala</sourceDirectory>
@@ -191,11 +184,12 @@
 			</plugin>
 		</plugins>
 
+
 		<extensions>
 			<extension>
-				<groupId>ar.com.synergian</groupId>
-				<artifactId>wagon-git</artifactId>
-				<version>0.2.3</version>
+				<groupId>org.apache.maven.wagon</groupId>
+				<artifactId>wagon-ssh</artifactId>
+				<version>2.6</version>
 			</extension>
 		</extensions>
 	</build>
