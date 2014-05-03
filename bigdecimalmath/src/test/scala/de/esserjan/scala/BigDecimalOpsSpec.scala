@@ -1,4 +1,4 @@
-package de.esserjan.edu
+package de.esserjan.scala
 
 import org.scalatest._
 import org.scalacheck._

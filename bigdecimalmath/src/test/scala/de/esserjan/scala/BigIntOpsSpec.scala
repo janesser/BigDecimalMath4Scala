@@ -1,4 +1,4 @@
-package de.esserjan.edu
+package de.esserjan.scala
 
 import org.scalatest._
 import org.scalatest.prop.PropertyChecks
@@ -6,6 +6,7 @@ import org.scalatest.prop.PropertyChecks
 import BigDecimalMath._
 
 object BigIntOpsSpec {
+
   import org.scalatest.prop.PropertyChecks.Table
   val faculties = Table(
     ("n", "fac"),
@@ -20,7 +21,8 @@ import org.scalatest.junit.JUnitRunner
 
 @RunWith(classOf[JUnitRunner])
 class BigIntOpsSpec extends FlatSpec with Matchers with PropertyChecks {
-  import BigIntOpsSpec._
+
+import BigIntOpsSpec._
   "BigDecimalMath - BigIntOps" should "negate" in {
     forAll { (i: BigInt) =>
       whenever(i != 0) {

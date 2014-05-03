@@ -14,13 +14,22 @@ Intention of this extending library is:
 
 Steps to integrate:
 
-- get and compile source-code
+- add snapshot repository to your pom.xml
 		
-		git clone https://bitbucket.org/janesser/bigdecimalmath.git
-		cd BigDecimalMath
-		mvn install
-		
-- insert into to your pom.xml (or alike)
+		<repositories>
+			<repository>
+				<id>bigdecimalmath-snapshots</id>
+				<url>http://www.esserjan.de/scala/bigdecimalmath/snapshots</url>
+				<releases>
+					<enabled>false</enabled>
+				</releases>
+				<snapshots>
+					<enabled>true</enabled>
+				</snapshots>
+			</repository>
+		</repositories>
+
+- add dependency to your pom.xml
 
 		<dependency>
 			<groupId>de.esserjan.scala</groupId>
@@ -30,7 +39,7 @@ Steps to integrate:
 
 - insert into your code
 
-		import de.esserjan.edu.BigDecimalMath._
+		import de.esserjan.scala.BigDecimalMath._
 	
 ## BigIntOps 
 *Negation* by multiplication with `BigInt(-1)`. As long as the number was not zero before, the result's signum multiplied with the input signum is always "-1".

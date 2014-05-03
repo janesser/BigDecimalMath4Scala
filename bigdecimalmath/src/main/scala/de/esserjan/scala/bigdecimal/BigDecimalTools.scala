@@ -1,6 +1,4 @@
-package de.esserjan.edu.bigdecimal
-
-import scala.math.BigDecimal.int2bigDecimal
+package de.esserjan.scala.bigdecimal
 
 object BigDecimalTools {
   trait EvalSeriesGoodEnough extends Function4[java.math.MathContext, Int, BigDecimal, BigDecimal, Boolean]

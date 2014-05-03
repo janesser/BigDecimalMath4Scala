@@ -1,16 +1,15 @@
-package de.esserjan.edu.bigdecimal
+package de.esserjan.scala.bigdecimal
 
 import org.scalatest._
 import org.scalacheck._
 import org.scalatest.prop.PropertyChecks
-
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 
 @RunWith(classOf[JUnitRunner])
 class BigDecimalTrigonometrySpec extends FlatSpec with Matchers with PropertyChecks {
-  import de.esserjan.edu.BigDecimalMath._
-  import de.esserjan.edu.bigdecimal.BigDecimalTrigonometry._
+  import de.esserjan.scala.bigdecimal.BigDecimalTrigonometry._
+  import de.esserjan.scala.BigDecimalMath._
 
   val PI: Double = java.lang.Math.PI
 

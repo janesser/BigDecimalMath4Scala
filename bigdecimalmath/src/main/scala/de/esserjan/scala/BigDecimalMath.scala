@@ -1,4 +1,4 @@
-package de.esserjan.edu
+package de.esserjan.scala
 
 object BigDecimalMath {
   import bigdecimal.BigDecimalTools._

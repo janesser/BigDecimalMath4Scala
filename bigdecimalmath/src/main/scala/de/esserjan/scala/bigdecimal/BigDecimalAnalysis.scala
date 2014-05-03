@@ -1,7 +1,7 @@
-package de.esserjan.edu.bigdecimal
+package de.esserjan.scala.bigdecimal
 
 object BigDecimalAnalysis {
-  import de.esserjan.edu.BigDecimalMath._
+  import de.esserjan.scala.BigDecimalMath._
   import BigDecimalTools._
 
   /**

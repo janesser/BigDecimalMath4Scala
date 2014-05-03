@@ -1,22 +1,22 @@
-package de.esserjan.edu.bigdecimal
+package de.esserjan.scala.bigdecimal
 
 import org.scalatest._
 import org.scalacheck._
 import org.scalatest.prop.PropertyChecks
-
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 
 object BigDecimalAnalysisSpec {
-  import de.esserjan.edu.bigdecimal.BigDecimalAnalysis._
+  import de.esserjan.scala.bigdecimal.BigDecimalAnalysis._
+
   val posIntsUpToEPrecision =
     for (n <- Gen.choose(2, E_PRECISION)) yield n
 }
 
 @RunWith(classOf[JUnitRunner])
 class BigDecimalAnalysisSpec extends FlatSpec with Matchers with PropertyChecks {
-  import de.esserjan.edu.BigDecimalMath._
-  import de.esserjan.edu.bigdecimal.BigDecimalAnalysis._
+  import de.esserjan.scala.bigdecimal.BigDecimalAnalysis._
+  import de.esserjan.scala.BigDecimalMath._
 
   import BigDecimalAnalysisSpec._
 
@@ -60,7 +60,7 @@ class BigDecimalAnalysisSpec extends FlatSpec with Matchers with PropertyChecks 
 
   /**
    * Calculation at point 1.0 with varying precision.
-   * 
+   *
    * Omit this test to keep a responsive test-set.
    */
   ignore should "provide equal E rounded and calculated" in {
