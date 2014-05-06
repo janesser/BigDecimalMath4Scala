@@ -14,28 +14,38 @@ Intention of this extending library is:
 
 Steps to integrate:
 
-- add snapshot repository to your pom.xml
-		
-		<repositories>
-			<repository>
-				<id>bigdecimalmath-snapshots</id>
-				<url>http://www.esserjan.de/scala/bigdecimalmath/snapshots</url>
-				<releases>
-					<enabled>false</enabled>
-				</releases>
-				<snapshots>
-					<enabled>true</enabled>
-				</snapshots>
-			</repository>
-		</repositories>
+- add snapshot repository
+	- sbt-style
+
+			resolvers += "bigdecimalmath-snapshots" at "http://www.esserjan.de/scala/bigdecimalmath/snapshots"
+	
+	- maven-style
+
+			<repositories>
+				<repository>
+					<id>bigdecimalmath-snapshots</id>
+					<url>http://www.esserjan.de/scala/bigdecimalmath/snapshots</url>
+					<releases>
+						<enabled>false</enabled>
+					</releases>
+					<snapshots>
+						<enabled>true</enabled>
+					</snapshots>
+				</repository>
+			</repositories>
 
 - add dependency to your pom.xml
+	- sbt-style
 
-		<dependency>
-			<groupId>de.esserjan.scala</groupId>
-        		<artifactId>bigdecimalmath_2.10</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-		</dependency>
+			libraryDependencies += "de.esserjan.scala" % "bigdecimalmath_2.10" % "0.0.1-SNAPSHOT"
+
+	- maven-style
+
+			<dependency>
+				<groupId>de.esserjan.scala</groupId>
+					<artifactId>bigdecimalmath_2.10</artifactId>
+				<version>0.0.1-SNAPSHOT</version>
+			</dependency>
 
 - insert into your code
 
