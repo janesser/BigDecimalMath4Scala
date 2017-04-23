@@ -2,6 +2,8 @@
 Be as precise as you like (or as much as you can afford in terms of runtime).
 BigDecimal precision is maintained throughout calculations. That means function parameter and result have equal scale. ZERO is a special case anyway.
 
+Maven Site at: [site](http://janesser.github.io/BigDecimalMath4Scala/)
+
 Actually [scala.math.BigDecimal](http://www.scala-lang.org/api/2.10.4/index.html#scala.math.BigDecimal) and alike are almost equal (or worse) than their Java correspondants [java.math.BigDecimal](http://docs.oracle.com/javase/7/docs/api/java/math/BigDecimal.html). 
 Having some functional structures at hand may improve the way to think about computating formulas.
 
@@ -17,14 +19,14 @@ Steps to integrate:
 - add snapshot repository
 	- sbt-style
 
-			resolvers += "bigdecimalmath-snapshots" at "http://www.esserjan.de/scala/bigdecimalmath/snapshots"
+			resolvers += "bigdecimalmath-snapshots" at "https://github.com/janesser/BigDecimalMath4Scala/tree/mvn-repo/de/esserjan/scala/bigdecimalmath_2.12"
 	
 	- maven-style
 
 			<repositories>
 				<repository>
 					<id>bigdecimalmath-snapshots</id>
-					<url>http://www.esserjan.de/scala/bigdecimalmath/snapshots</url>
+					<url>https://github.com/janesser/BigDecimalMath4Scala/tree/mvn-repo/de/esserjan/scala/bigdecimalmath_2.12</url>
 					<releases>
 						<enabled>false</enabled>
 					</releases>
@@ -37,13 +39,13 @@ Steps to integrate:
 - add dependency to your pom.xml
 	- sbt-style
 
-			libraryDependencies += "de.esserjan.scala" % "bigdecimalmath_2.10" % "0.0.1-SNAPSHOT"
+			libraryDependencies += "de.esserjan.scala" % "bigdecimalmath_2.12" % "0.0.1-SNAPSHOT"
 
 	- maven-style
 
 			<dependency>
 				<groupId>de.esserjan.scala</groupId>
-					<artifactId>bigdecimalmath_2.10</artifactId>
+				<artifactId>bigdecimalmath_2.12</artifactId>
 				<version>0.0.1-SNAPSHOT</version>
 			</dependency>
 
@@ -51,7 +53,7 @@ Steps to integrate:
 
 		import de.esserjan.scala.BigDecimalMath._
 
-ScalaDoc is available [here](http://www.esserjan.de/scala/bigdecimalmath/site/scaladocs/index.html).
+ScalaDoc is available [here](http://janesser.github.io/BigDecimalMath4Scala/scaladocs/de/esserjan/scala/BigDecimalMath$.html).
 	
 ## BigIntOps 
 *Negation* by multiplication with `BigInt(-1)`. As long as the number was not zero before, the result's signum multiplied with the input signum is always "-1".
@@ -143,7 +145,8 @@ Some generic goodEnough criteria are predefined.
 BigDecimalMath is provided to you as free software under the [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.html).
 
 # Releases
-0.0.1 *work in progress* Q2'14 with a basic set of operations.
+0.0.2 Q1'17 bigdecimalmath_2.12 upgraded to scala 2.12
+0.0.1 Q2'14 bigdecimalmath_2.11 with a basic set of operations.
 
 # Contribution
 Feel free to offer pull requests or create issues for your suggestions.

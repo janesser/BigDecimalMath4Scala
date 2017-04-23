@@ -4,6 +4,7 @@
 
 	<description>Extended BigDecimal Arithmetics and Computations for Scala</description>
 	<inceptionYear>2014</inceptionYear>
+	<url>https://github.com/janesser/BigDecimalMath4Scala</url>
 
 	<contributors>
 		<contributor>
@@ -26,40 +27,36 @@
 	</licenses>
 
 	<scm>
-		<url>http://bitbucket.org/janesser/bigdecimalmath/src</url>
-		<connection>scm:git:https://bitbucket.org/janesser/bigdecimalmath.git</connection>
-		<developerConnection>scm:git:https://janesser@bitbucket.org/janesser/bigdecimalmath.git</developerConnection>
+		<url>https://github.com/janesser/BigDecimalMath4Scala</url>
+		<connection>scm:git:https://github.com/janesser/BigDecimalMath4Scala.git</connection>
+		<developerConnection>scm:git:https://github.com/janesser/BigDecimalMath4Scala.git</developerConnection>
 	</scm>
 
 	<issueManagement>
-		<system>BitBucket JIRA</system>
-		<url>https://bitbucket.org/janesser/bigdecimalmath/issues</url>
+		<system>github</system>
+		<url>https://github.com/janesser/BigDecimalMath4Scala/issues</url>
 	</issueManagement>
 
 
 	<distributionManagement>
-		<snapshotRepository>
-			<id>esserjan.de.ssh</id>
-			<name>BigDecimalMath4Scala snapshots</name>
-			<url>scp://jan@esserjan.de:/home/jan/html/scala/bigdecimalmath/mvnRepo/snapshots</url>
-		</snapshotRepository>
 		<repository>
-			<id>BigDecimalMath4Scala - release</id>
-			<name>BigDecimalMath4Scala releases</name>
-			<url>scp://jan@esserjan.de:/home/jan/html/scala/bigdecimalmath/mvnRepo/releases</url>
+			<id>internal.repo</id>
+			<name>Temporary Staging Repository</name>
+			<url>file://${project.build.directory}/mvn-repo</url>
 		</repository>
-		<site>
-			<id>BigDecimalMath4Scala - site</id>
-			<url>scp://jan@esserjan.de:/home/jan/html/scala/bigdecimalmath/site</url>
-		</site>
 	</distributionManagement>
 
 	<properties>
-		<maven.compiler.source>1.6</maven.compiler.source>
-		<maven.compiler.target>1.6</maven.compiler.target>
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
 		<encoding>UTF-8</encoding>
-		<scala.tools.version>2.10</scala.tools.version>
-		<scala.version>2.10.3</scala.version>
+		<scala.tools.version>2.12</scala.tools.version>
+		<scala.version>2.12.2</scala.version>
+
+		<scala-maven-plugin.version>3.2.2</scala-maven-plugin.version>
+
+		<!-- github server corresponds to entry in ~/.m2/settings.xml -->
+		<github.global.server>github</github.global.server>
 	</properties>
 
 	<groupId>de.esserjan.scala</groupId>
@@ -76,21 +73,22 @@
 			<dependency>
 				<groupId>org.scalatest</groupId>
 				<artifactId>scalatest_${scala.tools.version}</artifactId>
-				<version>2.1.3</version>
+				<version>3.0.3</version>
 			</dependency>
 			<dependency>
 				<groupId>org.scalacheck</groupId>
 				<artifactId>scalacheck_${scala.tools.version}</artifactId>
-				<version>1.11.2</version>
+				<version>1.13.5</version>
 			</dependency>
 			<dependency>
 				<groupId>junit</groupId>
 				<artifactId>junit</artifactId>
-				<version>4.11</version>
+				<version>4.12</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
 
+	<!-- mvn dependency:purge-local-repository to reload -->
 	<dependencies>
 		<dependency>
 			<groupId>org.scala-lang</groupId>
@@ -124,7 +122,12 @@
 				<plugin>
 					<groupId>net.alchim31.maven</groupId>
 					<artifactId>scala-maven-plugin</artifactId>
-					<version>3.1.6</version>
+					<version>${scala-maven-plugin.version}</version>
+				</plugin>
+				<plugin>
+					<groupId>com.vast</groupId>
+					<artifactId>scala-lifecycle-plugin</artifactId>
+					<version>0.3.3</version>
 				</plugin>
 				<plugin>
 					<groupId>com.vast</groupId>
@@ -134,7 +137,17 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-release-plugin</artifactId>
-					<version>2.5</version>
+					<version>2.5.3</version>
+				</plugin>
+				<plugin>
+					<groupId>com.github.github</groupId>
+					<artifactId>site-maven-plugin</artifactId>
+					<version>0.12</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-site-plugin</artifactId>
+					<version>3.6</version>
 				</plugin>
 			</plugins>
 		</pluginManagement>
@@ -150,14 +163,6 @@
 						<goals>
 							<goal>compile</goal>
 						</goals>
-						<configuration>
-							<args>
-								<arg>-deprecation</arg>
-								<arg>-feature</arg>
-								<arg>-target:jvm-${maven.compiler.target}</arg>
-								<arg>-optimise</arg>
-							</args>
-						</configuration>
 					</execution>
 					<execution>
 						<id>compileTest</id>
@@ -165,17 +170,30 @@
 						<goals>
 							<goal>testCompile</goal>
 						</goals>
-						<configuration>
-							<args>
-								<arg>-target:jvm-${maven.compiler.target}</arg>
-								<arg>-optimise</arg>
-							</args>
-						</configuration>
+					</execution>
+					<execution>
+						<id>attach-javadocs</id>
+						<phase>package</phase>
+						<goals>
+							<goal>doc-jar</goal>
+						</goals>
 					</execution>
 				</executions>
+				<configuration>
+					<args>
+						<arg>-deprecation</arg>
+						<arg>-feature</arg>
+						<arg>-target:jvm-${maven.compiler.target}</arg>
+						<arg>-opt:l:classpath</arg>
+					</args>
+				</configuration>
 			</plugin>
 
 			<!-- testing -->
+			<plugin>
+				<groupId>com.vast</groupId>
+				<artifactId>scala-lifecycle-plugin</artifactId>
+			</plugin>
 			<plugin>
 				<groupId>com.vast</groupId>
 				<artifactId>scala-surefire-maven-plugin</artifactId>
@@ -194,22 +212,54 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-release-plugin</artifactId>
 				<configuration>
-					<tagNameFormat>v${project.version}</tagNameFormat>
-					<preparationGoals>clean verify</preparationGoals>
-					<goals>deploy</goals>
-					<useReleaseProfile>false</useReleaseProfile>
+					<altDeploymentRepository>internal.repo::default::file://${project.build.directory}/mvn-repo</altDeploymentRepository>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>com.github.github</groupId>
+				<artifactId>site-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>mvn-repo</id>
+						<phase>deploy</phase>
+						<goals>
+							<goal>site</goal>
+						</goals>
+						<configuration>
+							<message>Maven artifacts for ${project.version}</message>
+							<noJekyll>true</noJekyll>
+							<outputDirectory>${project.build.directory}/mvn-repo</outputDirectory>
+							<branch>refs/heads/mvn-repo</branch>
+							<includes>
+								<include>**/*</include>
+							</includes>
+						</configuration>
+					</execution>
+					<execution>
+						<id>gh-pages</id>
+						<phase>site-deploy</phase>
+						<goals>
+							<goal>site</goal>
+						</goals>
+						<configuration>
+							<message>Maven site for ${project.version}</message>
+						</configuration>
+					</execution>
+				</executions>
+				<configuration>
+					<repositoryName>BigDecimalMath4Scala</repositoryName>
+					<repositoryOwner>janesser</repositoryOwner>
+				</configuration>
+			</plugin>
+			<!-- maven-site-plugin should NOT attempt to site-deploy -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-site-plugin</artifactId>
+				<configuration>
+					<skipDeploy>true</skipDeploy>
 				</configuration>
 			</plugin>
 		</plugins>
-
-
-		<extensions>
-			<extension>
-				<groupId>org.apache.maven.wagon</groupId>
-				<artifactId>wagon-ssh</artifactId>
-				<version>2.6</version>
-			</extension>
-		</extensions>
 	</build>
 	<reporting>
 		<plugins>
@@ -221,7 +271,12 @@
 			<plugin>
 				<groupId>net.alchim31.maven</groupId>
 				<artifactId>scala-maven-plugin</artifactId>
-				<version>3.1.6</version>
+				<version>${scala-maven-plugin.version}</version>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-report-plugin</artifactId>
+				<version>2.20</version>
 			</plugin>
 		</plugins>
 	</reporting>

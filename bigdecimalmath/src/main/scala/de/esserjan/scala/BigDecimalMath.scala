@@ -154,6 +154,6 @@ object BigDecimalMath {
     /**
      * @return `x` with stripped trailing zeroes.
      */
-    def stripTrailingZeros = BigDecimal(x.underlying.stripTrailingZeros(), mc)
+    def stripTrailingZeros = new BigDecimal(x.underlying.stripTrailingZeros(), mc)
   }
 }
