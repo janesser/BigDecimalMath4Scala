@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
+  <groupId>de.esserjan.scala</groupId>
+  <artifactId>bigdecimalmath_2.12</artifactId>
+  <versioning>
+    <versions>
+      <version>0.0.2-SNAPSHOT</version>
+    </versions>
+    <lastUpdated>20170423103150</lastUpdated>
+  </versioning>
+</metadata>

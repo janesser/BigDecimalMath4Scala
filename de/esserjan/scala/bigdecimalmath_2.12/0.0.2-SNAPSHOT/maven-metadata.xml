@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata modelVersion="1.1.0">
+  <groupId>de.esserjan.scala</groupId>
+  <artifactId>bigdecimalmath_2.12</artifactId>
+  <version>0.0.2-SNAPSHOT</version>
+  <versioning>
+    <snapshot>
+      <timestamp>20170423.103150</timestamp>
+      <buildNumber>6</buildNumber>
+    </snapshot>
+    <lastUpdated>20170423103150</lastUpdated>
+    <snapshotVersions>
+      <snapshotVersion>
+        <extension>jar</extension>
+        <value>0.0.2-20170423.103150-6</value>
+        <updated>20170423103150</updated>
+      </snapshotVersion>
+      <snapshotVersion>
+        <extension>pom</extension>
+        <value>0.0.2-20170423.103150-6</value>
+        <updated>20170423103150</updated>
+      </snapshotVersion>
+    </snapshotVersions>
+  </versioning>
+</metadata>
