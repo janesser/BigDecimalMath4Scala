@@ -26,16 +26,14 @@
 	</licenses>
 
 	<scm>
-		<!-- FIXME -->
-		<url>http://bitbucket.org/janesser/bigdecimalmath/src</url>
-		<connection>scm:git:https://bitbucket.org/janesser/bigdecimalmath.git</connection>
-		<developerConnection>scm:git:https://janesser@bitbucket.org/janesser/bigdecimalmath.git</developerConnection>
+		<url>https://github.com/janesser/BigDecimalMath4Scala</url>
+		<connection>scm:git:https://github.com/janesser/BigDecimalMath4Scala.git</connection>
+		<developerConnection>scm:git:https://github.com/janesser/BigDecimalMath4Scala.git</developerConnection>
 	</scm>
 
 	<issueManagement>
-		<!-- FIXME -->
-		<system>BitBucket JIRA</system>
-		<url>https://bitbucket.org/janesser/bigdecimalmath/issues</url>
+		<system>github</system>
+		<url>https://github.com/janesser/BigDecimalMath4Scala/issues</url>
 	</issueManagement>
 
 
@@ -173,6 +171,16 @@
 							</args>
 						</configuration>
 					</execution>
+					<execution>
+						<id>scalaDoc</id>
+						<phase>package</phase>
+						<goals>
+							<goal>doc</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${project.build.directory}/mvn-repo/scalaDoc</outputDirectory>
+						</configuration>
+					</execution>
 				</executions>
 			</plugin>
 
@@ -203,11 +211,23 @@
 				<artifactId>site-maven-plugin</artifactId>
 				<executions>
 					<execution>
+						<phase>deploy</phase>
 						<goals>
 							<goal>site</goal>
 						</goals>
 					</execution>
 				</executions>
+				<configuration>
+					<message>Maven artifacts for ${project.version}</message>
+					<noJekyll>true</noJekyll>
+					<outputDirectory>${project.build.directory}/mvn-repo</outputDirectory>
+					<branch>refs/heads/mvn-repo</branch>
+					<includes>
+						<include>**/*</include>
+					</includes>
+					<repositoryName>BigDecimalMath4Scala</repositoryName>
+					<repositoryOwner>janesser</repositoryOwner>
+				</configuration>
 			</plugin>
 		</plugins>
 
