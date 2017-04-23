@@ -4,8 +4,8 @@
   <artifactId>bigdecimalmath_2.12</artifactId>
   <versioning>
     <versions>
-      <version>0.0.2-SNAPSHOT</version>
+      <version>0.0.1-SNAPSHOT</version>
     </versions>
-    <lastUpdated>20170423105225</lastUpdated>
+    <lastUpdated>20170423153552</lastUpdated>
   </versioning>
 </metadata>

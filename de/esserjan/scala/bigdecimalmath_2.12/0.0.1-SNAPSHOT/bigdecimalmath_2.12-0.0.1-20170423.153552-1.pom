@@ -51,6 +51,8 @@
 		<encoding>UTF-8</encoding>
 		<scala.tools.version>2.12</scala.tools.version>
 		<scala.version>2.12.2</scala.version>
+		
+		<scala-maven-plugin.version>3.2.2</scala-maven-plugin.version>
 
 		<!-- github server corresponds to entry in ~/.m2/settings.xml -->
 		<github.global.server>github</github.global.server>
@@ -58,7 +60,7 @@
 
 	<groupId>de.esserjan.scala</groupId>
 	<artifactId>bigdecimalmath_${scala.tools.version}</artifactId>
-	<version>0.0.2-SNAPSHOT</version>
+	<version>0.0.1-SNAPSHOT</version>
 
 	<dependencyManagement>
 		<dependencies>
@@ -85,6 +87,7 @@
 		</dependencies>
 	</dependencyManagement>
 
+	<!-- mvn dependency:purge-local-repository to reload -->
 	<dependencies>
 		<dependency>
 			<groupId>org.scala-lang</groupId>
@@ -118,7 +121,7 @@
 				<plugin>
 					<groupId>net.alchim31.maven</groupId>
 					<artifactId>scala-maven-plugin</artifactId>
-					<version>3.2.2</version>
+					<version>${scala-maven-plugin.version}</version>
 				</plugin>
 				<plugin>
 					<groupId>com.vast</groupId>
@@ -169,16 +172,6 @@
 								<arg>-target:jvm-${maven.compiler.target}</arg>
 								<arg>-optimise</arg>
 							</args>
-						</configuration>
-					</execution>
-					<execution>
-						<id>scalaDoc</id>
-						<phase>package</phase>
-						<goals>
-							<goal>doc</goal>
-						</goals>
-						<configuration>
-							<outputDirectory>${project.build.directory}/mvn-repo/scalaDoc</outputDirectory>
 						</configuration>
 					</execution>
 				</executions>
@@ -250,7 +243,7 @@
 			<plugin>
 				<groupId>net.alchim31.maven</groupId>
 				<artifactId>scala-maven-plugin</artifactId>
-				<version>3.1.6</version>
+				<version>${scala-maven-plugin.version}</version>
 			</plugin>
 		</plugins>
 	</reporting>
